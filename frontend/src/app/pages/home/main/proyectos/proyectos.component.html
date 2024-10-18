@@ -1,1 +1,45 @@
-<p>proyectos works!</p>
+<!-- proyectos-tabla.component.html -->
+<div class="container mx-auto py-10">
+  <table class="min-w-full bg-white border border-gray-300">
+    <caption class="text-lg font-semibold mb-4">Tabla de Gestión de Proyectos</caption>
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="py-2 px-4 border-b">ID</th>
+        <th class="py-2 px-4 border-b">Nombre del Proyecto</th>
+        <th class="py-2 px-4 border-b">Cliente</th>
+        <th class="py-2 px-4 border-b">Fecha de Inicio</th>
+        <th class="py-2 px-4 border-b">Fecha de Fin</th>
+        <th class="py-2 px-4 border-b">Progreso</th>
+        <th class="py-2 px-4 border-b">Estado</th>
+        <th class="py-2 px-4 border-b">Tareas Pendientes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let proyecto of proyectos">
+        <td class="py-2 px-4 border-b">{{ proyecto.id }}</td>
+        <td class="py-2 px-4 border-b font-medium">{{ proyecto.nombre }}</td>
+        <td class="py-2 px-4 border-b">{{ proyecto.cliente }}</td>
+        <td class="py-2 px-4 border-b">{{ proyecto.fechaInicio }}</td>
+        <td class="py-2 px-4 border-b">{{ proyecto.fechaFin }}</td>
+        <td class="py-2 px-4 border-b">
+          <div class="flex items-center">
+            <div class="relative w-full h-2 bg-gray-200 rounded">
+              <div class="absolute h-full bg-green-500 rounded" [style.width.%]="proyecto.progreso"></div>
+            </div>
+            <span class="ml-2 text-sm font-medium">{{ proyecto.progreso }}%</span>
+          </div>
+        </td>
+        <td class="py-2 px-4 border-b">
+          <span class="px-2 py-1 rounded"
+            [class.bg-blue-500]="proyecto.estado === 'En progreso'"
+            [class.text-white]="proyecto.estado === 'En progreso'"
+            [class.bg-gray-300]="proyecto.estado !== 'En progreso'"
+            [class.text-black]="proyecto.estado !== 'En progreso'">
+            {{ proyecto.estado }}
+          </span>
+        </td>
+        <td class="py-2 px-4 border-b">{{ proyecto.tareasPendientes }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
