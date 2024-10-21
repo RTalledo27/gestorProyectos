@@ -1,18 +1,22 @@
-<div class="p-6">
-  <h1 class="text-3xl font-bold mb-6">Equipo</h1>
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    <div *ngFor="let miembro of miembros" class="bg-white p-4 rounded-lg shadow">
-      <div class="flex items-center mb-4">
-        <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white text-xl font-bold mr-4">
+<div class="p-8 bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen">
+  <h1 class="text-4xl font-extrabold mb-8 text-gray-800">Equipo</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let miembro of miembros"
+      class="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all transform hover:scale-105">
+      <div class="flex items-center mb-6">
+        <div
+          class="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mr-4">
           {{ miembro.nombre.charAt(0) }}
         </div>
         <div>
-          <h2 class="text-xl font-semibold">{{ miembro.nombre }}</h2>
-          <p class="text-gray-600">{{ miembro.cargo }}</p>
+          <h2 class="text-2xl font-bold text-gray-700">{{ miembro.nombre }}</h2>
+          <p class="text-gray-500">{{ miembro.cargo }}</p>
         </div>
       </div>
-      <p class="text-gray-600 mb-2">{{ miembro.email }}</p>
-      <div class="bg-blue-100 text-blue-800 text-xs font-semibold  px-2.5 py-0.5 rounded-full inline-block">
+      <p class="text-gray-600 mb-4">{{ miembro.email }}</p>
+      <div
+        class="bg-gradient-to-r from-blue-400 to-blue-600 text-white text-sm font-semibold px-3 py-1 rounded-full inline-block">
         {{ miembro.proyectos }} {{ miembro.proyectos === 1 ? 'proyecto' : 'proyectos' }} activos
       </div>
     </div>

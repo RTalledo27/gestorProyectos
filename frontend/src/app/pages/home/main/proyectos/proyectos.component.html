@@ -1,52 +1,52 @@
-<!-- proyectos-tabla.component.html -->
-<div class="container mx-auto py-10">
-
-  <div class="relative flex items-center">
-    <input type="text" placeholder="Buscar proyectos..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full max-w-sm" />
-    <button class="btn btn-outline-secondary absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
+<div class="p-6 bg-gray-50 rounded-lg shadow-lg">
+  <div class="relative flex items-center mb-6">
+    <input type="text" placeholder="Buscar proyectos..."
+      class="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full max-w-sm shadow-sm" />
+    <button
+      class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
       <i class="fas fa-search"></i>
     </button>
   </div>
-
-  <table class="min-w-full bg-white border border-gray-300">
-    <caption class="text-lg font-semibold mb-4">Tabla de Gestión de Proyectos</caption>
-    <thead>
-      <tr class="bg-gray-100">
-        <th class="py-2 px-4 border-b">ID</th>
-        <th class="py-2 px-4 border-b">Nombre del Proyecto</th>
-        <th class="py-2 px-4 border-b">Cliente</th>
-        <th class="py-2 px-4 border-b">Fecha de Inicio</th>
-        <th class="py-2 px-4 border-b">Fecha de Fin</th>
-        <th class="py-2 px-4 border-b">Progreso</th>
-        <th class="py-2 px-4 border-b">Estado</th>
-        <th class="py-2 px-4 border-b">Tareas Pendientes</th>
+  
+  <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-lg">
+    <caption class="text-lg font-semibold mb-4 text-gray-800">Tabla de Gestión de Proyectos</caption>
+    <thead class="bg-blue-100 text-blue-800">
+      <tr>
+        <th class="py-3 px-4 border-b text-left font-semibold">ID</th>
+        <th class="py-3 px-4 border-b text-left font-semibold">Nombre del Proyecto</th>
+        <th class="py-3 px-4 border-b text-left font-semibold">Cliente</th>
+        <th class="py-3 px-4 border-b text-left font-semibold">Fecha de Inicio</th>
+        <th class="py-3 px-4 border-b text-left font-semibold">Fecha de Fin</th>
+        <th class="py-3 px-4 border-b text-left font-semibold">Progreso</th>
+        <th class="py-3 px-4 border-b text-left font-semibold">Estado</th>
+        <th class="py-3 px-4 border-b text-left font-semibold">Tareas Pendientes</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let proyecto of proyectos">
-        <td class="py-2 px-4 border-b">{{ proyecto.id }}</td>
-        <td class="py-2 px-4 border-b font-medium">{{ proyecto.nombre }}</td>
-        <td class="py-2 px-4 border-b">{{ proyecto.cliente }}</td>
-        <td class="py-2 px-4 border-b">{{ proyecto.fechaInicio }}</td>
-        <td class="py-2 px-4 border-b">{{ proyecto.fechaFin }}</td>
-        <td class="py-2 px-4 border-b">
+      <tr *ngFor="let proyecto of proyectos" class="hover:bg-gray-50 transition-all">
+        <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.id }}</td>
+        <td class="py-3 px-4 border-b text-gray-700 font-medium">{{ proyecto.nombre }}</td>
+        <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.cliente }}</td>
+        <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.fechaInicio }}</td>
+        <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.fechaFin }}</td>
+        <td class="py-3 px-4 border-b">
           <div class="flex items-center">
-            <div class="relative w-full h-2 bg-gray-200 rounded">
-              <div class="absolute h-full bg-green-500 rounded" [style.width.%]="proyecto.progreso"></div>
+            <div class="relative w-full h-2 bg-gray-200 rounded-full">
+              <div class="absolute h-full bg-green-500 rounded-full" [style.width.%]="proyecto.progreso"></div>
             </div>
-            <span class="ml-2 text-sm font-medium">{{ proyecto.progreso }}%</span>
+            <span class="ml-2 text-sm font-medium text-gray-700">{{ proyecto.progreso }}%</span>
           </div>
         </td>
-        <td class="py-2 px-4 border-b">
-          <span class="px-2 py-1 rounded"
+        <td class="py-3 px-4 border-b">
+          <span class="px-2 py-1 rounded-full text-xs font-semibold"
             [class.bg-blue-500]="proyecto.estado === 'En progreso'"
             [class.text-white]="proyecto.estado === 'En progreso'"
             [class.bg-gray-300]="proyecto.estado !== 'En progreso'"
-            [class.text-black]="proyecto.estado !== 'En progreso'">
+            [class.text-gray-800]="proyecto.estado !== 'En progreso'">
             {{ proyecto.estado }}
           </span>
         </td>
-        <td class="py-2 px-4 border-b">{{ proyecto.tareasPendientes }}</td>
+        <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.tareasPendientes }}</td>
       </tr>
     </tbody>
   </table>
