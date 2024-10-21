@@ -1,1 +1,49 @@
-<p>clientes works!</p>
+<div class="p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold">Clientes</h1>
+    <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+      Nuevo Cliente
+    </button>
+  </div>
+
+  <div class="mb-4">
+    <input type="text" placeholder="Buscar clientes..." class="w-full max-w-xs p-2 border border-gray-300 rounded">
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="py-2 px-4 text-left">ID</th>
+          <th class="py-2 px-4 text-left">Nombre</th>
+          <th class="py-2 px-4 text-left">Contacto</th>
+          <th class="py-2 px-4 text-left">Email</th>
+          <th class="py-2 px-4 text-left">Teléfono</th>
+          <th class="py-2 px-4 text-left">Proyectos Activos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cliente of clientes" class="border-b">
+          <td class="py-2 px-4">{{ cliente.id }}</td>
+          <td class="py-2 px-4">
+            <div class="flex items-center">
+              <i class="fas fa-building text-blue-500 mr-2"></i>
+              {{ cliente.nombre }}
+            </div>
+          </td>
+          <td class="py-2 px-4">{{ cliente.contacto }}</td>
+          <td class="py-2 px-4">{{ cliente.email }}</td>
+          <td class="py-2 px-4">{{ cliente.telefono }}</td>
+          <td class="py-2 px-4">
+            <span [ngClass]="{
+              'bg-blue-200 text-blue-800': cliente.proyectosActivos > 0,
+              'bg-gray-200 text-gray-800': cliente.proyectosActivos === 0
+            }" class="px-2 py-1 rounded-full text-xs font-semibold">
+              {{ cliente.proyectosActivos }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

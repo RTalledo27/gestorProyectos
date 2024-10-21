@@ -1,1 +1,20 @@
-<p>equipo works!</p>
+<div class="p-6">
+  <h1 class="text-3xl font-bold mb-6">Equipo</h1>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div *ngFor="let miembro of miembros" class="bg-white p-4 rounded-lg shadow">
+      <div class="flex items-center mb-4">
+        <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white text-xl font-bold mr-4">
+          {{ miembro.nombre.charAt(0) }}
+        </div>
+        <div>
+          <h2 class="text-xl font-semibold">{{ miembro.nombre }}</h2>
+          <p class="text-gray-600">{{ miembro.cargo }}</p>
+        </div>
+      </div>
+      <p class="text-gray-600 mb-2">{{ miembro.email }}</p>
+      <div class="bg-blue-100 text-blue-800 text-xs font-semibold  px-2.5 py-0.5 rounded-full inline-block">
+        {{ miembro.proyectos }} {{ miembro.proyectos === 1 ? 'proyecto' : 'proyectos' }} activos
+      </div>
+    </div>
+  </div>
+</div>

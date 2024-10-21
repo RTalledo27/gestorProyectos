@@ -37,8 +37,20 @@ export const routes: Routes = [
         path:'servicios',
         loadComponent:()=> import('./pages/home/main/servicios/servicios.component').then(m=>m.ServiciosComponent)
       }
+    ],
+
+  },
+  {
+    path:'auth',
+    loadComponent:()=> import('./pages/auth/auth.component').then(m=>m.AuthComponent),
+    children:[
+      {
+        path:'login',
+        loadComponent:()=> import('./pages/auth/login/login.component').then(m=>m.LoginComponent)
+      },
     ]
 
   }
+
 
 ];

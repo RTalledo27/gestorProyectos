@@ -1,18 +1,36 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
+from django.contrib.auth.hashers import make_password, check_password
+from rest_framework.authentication import BaseAuthentication
+from rest_framework.exceptions import AuthenticationFailed
+
 # Create your models here.
 
 class Usuarios(AbstractUser):
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
-    password = models.CharField(max_length=128)
+    password = models.CharField(max_length=255)
     nombres = models.CharField(max_length=30, blank=True)
     apellidos = models.CharField(max_length=30, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     last_login = models.DateTimeField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
+
+    def save(self, *args, **kwargs):
+        # Hashear la contraseña antes de guardar si es nueva o fue modificada
+        if not self.pk or self.has_changed('password'):
+            self.password = make_password(self.password)
+        super().save(*args, **kwargs)
+
+    def check_password(self, raw_password):
+        return check_password(raw_password, self.password)
     
+    def has_changed(self, field):
+        if not self.pk:
+            return True
+        old_value = type(self).objects.get(pk=self.pk).__dict__[field]
+        return getattr(self, field) != old_value
 class Roles(models.Model):
     nombre = models.CharField(max_length=30)
     descripcion = models.TextField(max_length=100)
@@ -175,6 +193,32 @@ class TokenAutenticacion(models.Model):
     token = models.CharField(max_length=255, unique=True)
     expira_en = models.DateTimeField()
     creado_en = models.DateTimeField(auto_now_add=True)
+    
+class CustomTokenAuthentication(BaseAuthentication):
+    def authenticate(self, request):
+        token = request.META.get('HTTP_AUTHORIZATION')
+
+        if not token:
+            return None  # No token provided
+
+        try:
+            # Remove 'Token ' prefix if it exists
+            if token.startswith('Token '):
+                token = token[6:]
+
+            token_obj = TokenAutenticacion.objects.get(token=token)
+
+            # Check if the token is expired
+            if token_obj.expira_en < timezone.now():
+                token_obj.delete()  # Optionally delete expired tokens
+                raise AuthenticationFailed('Token has expired')
+
+            # Token is valid, return the user and token
+            return (token_obj.usuario, token_obj) 
+
+        except TokenAutenticacion.DoesNotExist:
+            raise AuthenticationFailed('Invalid token')
+
 
 class Reporte(models.Model):
     OPCIONES_FORMATO = [
