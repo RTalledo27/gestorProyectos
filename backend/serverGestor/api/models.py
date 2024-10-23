@@ -52,12 +52,7 @@ class RolesPermisos(models.Model):
     class Meta:
         unique_together = ('rol', 'permiso')
 
-class UsuariosRol(models.Model):
-    usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE)
-    rol = models.ForeignKey(Roles, on_delete=models.CASCADE)
-    
-    class Meta:
-        unique_together = ('usuario', 'rol')
+
 
 class Clientes(models.Model):
     OPCIONES_GENERO = [
@@ -118,6 +113,14 @@ class Proyectos(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+class UsuariosRol(models.Model):
+    usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE)
+    rol = models.ForeignKey(Roles, on_delete=models.CASCADE)
+    proyecto = models.ForeignKey(Proyectos, on_delete=models.CASCADE)  # Vínculo al proyecto
+
+    class Meta:
+        unique_together = ('usuario', 'rol')
 
 class ProyectoServicio(models.Model):
     proyecto = models.ForeignKey(Proyectos, on_delete=models.CASCADE)

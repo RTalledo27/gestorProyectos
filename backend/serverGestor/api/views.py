@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
-from .models import Proyectos
+from .models import Proyectos, Roles,Permisos,UsuariosRol, Tarea
 from .serializers import ProyectoSerializer
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
@@ -13,9 +13,10 @@ import datetime
 from django.utils import timezone
 from rest_framework.authtoken.models import Token
 from .models import Usuarios, TokenAutenticacion, CustomTokenAuthentication
-from .serializers import UsuariosSerializer
+from .serializers import UsuariosSerializer, RolesSerializer, TareasSerializer
 import secrets  # Importa el módulo secrets para generar tokens
 from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework import generics,permissions 
 
 
 # Create your views here.
@@ -26,6 +27,8 @@ from rest_framework.decorators import authentication_classes, permission_classes
 #from rest_framework.decorators import api_view
 #from rest_framework.response import Response
 #from rest_framework import status
+
+## INICIO SPRINT 1:
 
 @api_view(['POST'])
 def login(request):
@@ -67,3 +70,78 @@ def proyectos(request):
     serializer = ProyectoSerializer(proyectos, many=True)
     return Response(serializer.data)
 
+## CREAR, EDITAR, ELIMINAR PROYECTOS
+class ProyectosListCreateView(generics.ListCreateAPIView):
+    queryset = Proyectos.objects.all()
+    serializer_class = ProyectoSerializer
+    authentication_classes= [CustomTokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+class ProyectosDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Proyectos.objects.all()
+    serializer_class = ProyectoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+#GESTIONAR ROLES Y PERMISOS:
+
+class RolListCreateView(generics.ListCreateAPIView):
+    queryset = Roles.objects.all()
+    serializer_class = RolesSerializer
+    authentication_classes= [CustomTokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class RolDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Roles.objects.all()
+    serializer_class = RolesSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+@api_view(['Post'])
+@authentication_classes([CustomTokenAuthentication])
+@permission_classes([IsAuthenticated])
+def asignarRolProyecto(request, proyecto_id):
+    rol_id = request.data.get('rol_id')
+
+
+    #VERIFICAR EXISTENCIA DE DATOS REQUEST
+    try:
+        proyecto = Proyectos.objects.get(pk=proyecto_id)
+        rol = Roles.objects.get(pk=rol_id)
+        usuario = request.user
+        
+
+    except Proyectos.DoesNotExist:
+        return Response({'error': 'Proyecto no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+    except Roles.DoesNotExist:
+        return Response({'error': 'Rol no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+    except Usuarios.DoesNotExist:
+        return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+    
+    #ASIGNAR ROL A USUARIO EN EL PROYECTO
+    UsuariosRol.objects.create(
+        usuario=usuario, 
+        rol=rol, 
+        proyecto=proyecto)
+
+
+    return Response({'message': 'Rol asignado correctamente al usuario en el proyecto.'}, status=status.HTTP_200_OK)
+
+
+    ## CREAR  EDITAR Y ELIMINAR TAREAS
+
+class TareasListCreateView(generics.ListCreateAPIView):
+    queryset = Tarea.objects.all()
+    serializer_class = TareasSerializer
+    authentication_classes= [CustomTokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+class TareasDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Tarea.objects.all()
+    serializer_class = TareasSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes= [CustomTokenAuthentication]
+
+ 
+
+
+ ## FIN SPRINT 1
