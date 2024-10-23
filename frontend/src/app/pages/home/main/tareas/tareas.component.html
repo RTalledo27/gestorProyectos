@@ -1,41 +1,41 @@
-<div class="p-6">
+<div class="p-6 bg-gray-50 rounded-lg shadow-lg">
   <div class="flex justify-between items-center mb-6">
-    <h1 class="text-3xl font-bold">Tareas</h1>
-    <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+    <h1 class="text-3xl font-bold text-gray-800">Tareas</h1>
+    <button class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all">
       Nueva Tarea
     </button>
   </div>
 
-  <div class="mb-4">
-    <input type="text" placeholder="Buscar tareas..." class="w-full max-w-xs p-2 border border-gray-300 rounded">
+  <div class="mb-6">
+    <input type="text" placeholder="Buscar tareas..." class="w-full max-w-xs p-3 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none transition-all">
   </div>
 
-  <div class="overflow-x-auto">
-    <table class="min-w-full bg-white">
-      <thead class="bg-gray-100">
+  <div class="overflow-x-auto bg-white rounded-lg shadow-md">
+    <table class="min-w-full bg-white rounded-lg">
+      <thead class="bg-blue-100 text-blue-800">
         <tr>
-          <th class="py-2 px-4 text-left">ID</th>
-          <th class="py-2 px-4 text-left">Descripción</th>
-          <th class="py-2 px-4 text-left">Proyecto</th>
-          <th class="py-2 px-4 text-left">Asignado a</th>
-          <th class="py-2 px-4 text-left">Fecha de Vencimiento</th>
-          <th class="py-2 px-4 text-left">Estado</th>
+          <th class="py-3 px-4 text-left text-sm font-bold">ID</th>
+          <th class="py-3 px-4 text-left text-sm font-bold">Descripción</th>
+          <th class="py-3 px-4 text-left text-sm font-bold">Proyecto</th>
+          <th class="py-3 px-4 text-left text-sm font-bold">Asignado a</th>
+          <th class="py-3 px-4 text-left text-sm font-bold">Fecha de Vencimiento</th>
+          <th class="py-3 px-4 text-left text-sm font-bold">Estado</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let tarea of tareas" class="border-b">
-          <td class="py-2 px-4">{{ tarea.id }}</td>
-          <td class="py-2 px-4">{{ tarea.descripcion }}</td>
-          <td class="py-2 px-4">{{ tarea.proyecto }}</td>
-          <td class="py-2 px-4">{{ tarea.asignado }}</td>
-          <td class="py-2 px-4">{{ tarea.vencimiento }}</td>
-          <td class="py-2 px-4">
+        <tr *ngFor="let tarea of tareas" class="border-b hover:bg-gray-50 transition-all">
+          <td class="py-4 px-6 text-gray-700">{{ tarea.id }}</td>
+          <td class="py-4 px-6 text-gray-700">{{ tarea.descripcion }}</td>
+          <td class="py-4 px-6 text-gray-700">{{ tarea.proyecto }}</td>
+          <td class="py-4 px-6 text-gray-700">{{ tarea.asignado }}</td>
+          <td class="py-4 px-6 text-gray-700">{{ tarea.vencimiento }}</td>
+          <td class="py-4 px-6">
             <span [ngClass]="{
               'bg-green-200 text-green-800': tarea.estado === 'Completado',
               'bg-yellow-200 text-yellow-800': tarea.estado === 'En progreso',
               'bg-red-200 text-red-800': tarea.estado === 'Atrasado',
               'bg-gray-200 text-gray-800': tarea.estado === 'Pendiente'
-            }" class="px-2 py-1 rounded-full text-xs font-semibold">
+            }" class="px-3 py-1 rounded-full text-xs font-semibold">
               {{ tarea.estado }}
             </span>
           </td>
