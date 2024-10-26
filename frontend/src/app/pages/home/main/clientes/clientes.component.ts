@@ -15,7 +15,7 @@ interface Cliente {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './clientes.component.html',
-  styleUrl: './clientes.component.css'
+  styleUrls: ['./clientes.component.css']
 })
 export class ClientesComponent {
   clientes: Cliente[] = [
@@ -25,4 +25,29 @@ export class ClientesComponent {
     { id: 4, nombre: "Tech Solutions", contacto: "Ana Martínez", email: "ana@techsolutions.com", telefono: "789-012-3456", proyectosActivos: 0 },
     { id: 5, nombre: "Global Services", contacto: "Pedro Sánchez", email: "pedro@globalservices.com", telefono: "321-654-0987", proyectosActivos: 1 },
   ];
+
+  currentPage: number = 1;
+  itemsPerPage: number = 5; //  Numero de items por pag
+
+  get paginatedClientes(): Cliente[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    return this.clientes.slice(start, end);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.clientes.length / this.itemsPerPage);
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
 }

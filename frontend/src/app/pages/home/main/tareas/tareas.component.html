@@ -1,13 +1,15 @@
 <div class="p-6 bg-gray-50 rounded-lg shadow-lg">
   <div class="flex justify-between items-center mb-6">
     <h1 class="text-3xl font-bold text-gray-800">Tareas</h1>
-    <button class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all">
+    <button
+      class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all">
       Nueva Tarea
     </button>
   </div>
 
   <div class="mb-6">
-    <input type="text" placeholder="Buscar tareas..." class="w-full max-w-xs p-3 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none transition-all">
+    <input type="text" placeholder="Buscar tareas..."
+      class="w-full max-w-xs p-3 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none transition-all">
   </div>
 
   <div class="overflow-x-auto bg-white rounded-lg shadow-md">
@@ -23,7 +25,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let tarea of tareas" class="border-b hover:bg-gray-50 transition-all">
+        <tr *ngFor="let tarea of paginatedTareas" class="border-b hover:bg-gray-50 transition-all">
           <td class="py-4 px-6 text-gray-700">{{ tarea.id }}</td>
           <td class="py-4 px-6 text-gray-700">{{ tarea.descripcion }}</td>
           <td class="py-4 px-6 text-gray-700">{{ tarea.proyecto }}</td>
@@ -42,5 +44,14 @@
         </tr>
       </tbody>
     </table>
+
+  </div>
+  <!-- Controles de Paginación -->
+  <div class="flex justify-end space-x-4 mt-4">
+    <button (click)="previousPage()" [disabled]="currentPage === 1"
+      class="px-3 py-1 bg-gray-300 rounded-lg text-gray-700">Anterior</button>
+    <span>Página {{ currentPage }} de {{ totalPages }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages"
+      class="px-3 py-1 bg-gray-300 rounded-lg text-gray-700">Siguiente</button>
   </div>
 </div>
