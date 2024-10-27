@@ -62,25 +62,26 @@ def login(request):
 
 
 
-@api_view(['GET'])
-@authentication_classes([CustomTokenAuthentication])
-@permission_classes([IsAuthenticated])
-def proyectos(request):
-    proyectos = Proyectos.objects.all()
-    serializer = ProyectoSerializer(proyectos, many=True)
-    return Response(serializer.data)
+###@api_view(['GET'])
+#@authentication_classes([CustomTokenAuthentication])
+#@permission_classes([IsAuthenticated])
+#def proyectos(request):
+#    proyectos = Proyectos.objects.all()
+#    serializer = ProyectoSerializer(proyectos, many=True)
+#    return Response(serializer.data)    
 
 ## CREAR, EDITAR, ELIMINAR PROYECTOS
 class ProyectosListCreateView(generics.ListCreateAPIView):
     queryset = Proyectos.objects.all()
     serializer_class = ProyectoSerializer
-    authentication_classes= [CustomTokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [CustomTokenAuthentication]  # Verifica esta línea
+    permission_classes = [IsAuthenticated]
 
 class ProyectosDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Proyectos.objects.all()
     serializer_class = ProyectoSerializer
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [CustomTokenAuthentication]  # Verifica esta línea
 
 #GESTIONAR ROLES Y PERMISOS:
 

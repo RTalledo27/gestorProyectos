@@ -1,4 +1,11 @@
 <div class="p-6 bg-gray-50 rounded-lg shadow-lg">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">Tareas</h1>
+    <button (click)="openNuevoProyectoDiv()" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all">
+      Nuevo Proyecto
+    </button>
+  </div>
+
   <div class="relative flex items-center mb-6">
     <input type="text" placeholder="Buscar proyectos..."
       class="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full max-w-sm shadow-sm" />
@@ -6,8 +13,13 @@
       class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
       <i class="fas fa-search"></i>
     </button>
+
+
+
+
+
   </div>
-  
+
   <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-lg">
     <caption class="text-lg font-semibold mb-4 text-gray-800">Tabla de Gestión de Proyectos</caption>
     <thead class="bg-blue-100 text-blue-800">
@@ -23,18 +35,18 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let proyecto of proyectos" class="hover:bg-gray-50 transition-all">
+      <tr *ngFor="let proyecto of proyectos" class="hover:bg-gray-50 transition-all" (click)="openEditarProyectoDiv(proyecto)">
         <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.id }}</td>
         <td class="py-3 px-4 border-b text-gray-700 font-medium">{{ proyecto.nombre }}</td>
-        <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.cliente }}</td>
-        <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.fechaInicio }}</td>
-        <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.fechaFin }}</td>
+        <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.clientes?.[0]?.nombre }}</td>
+        <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.fecha_inicio }}</td>
+        <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.fecha_fin }}</td>
         <td class="py-3 px-4 border-b">
           <div class="flex items-center">
             <div class="relative w-full h-2 bg-gray-200 rounded-full">
               <div class="absolute h-full bg-green-500 rounded-full" [style.width.%]="proyecto.progreso"></div>
             </div>
-            <span class="ml-2 text-sm font-medium text-gray-700">{{ proyecto.progreso }}%</span>
+            <span class="ml-2 text-sm font-medium text-gray-700">{{proyecto.progreso}}%</span>
           </div>
         </td>
         <td class="py-3 px-4 border-b">
@@ -46,8 +58,12 @@
             {{ proyecto.estado }}
           </span>
         </td>
-        <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.tareasPendientes }}</td>
+        <td class="py-3 px-4 border-b text-gray-700"></td>
       </tr>
     </tbody>
   </table>
 </div>
+
+
+<app-nuevo-proyecto *ngIf="nuevoProyectoVisible" (ocultarDiv)="closeNuevoProyectoDiv()"></app-nuevo-proyecto>
+<app-editar-proyecto [proyecto]="proyectoEditar" (ocultarDiv)="closeEditarProyectoDiv()" *ngIf="editarProyectoVisible"></app-editar-proyecto>

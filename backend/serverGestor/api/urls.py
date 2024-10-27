@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import proyectos
+#from .views import proyectos
 from django.urls import path
 from .views import login, RolListCreateView, RolDetailView, asignarRolProyecto, TareasListCreateView,TareasDetailView, ProyectosDetailView
 from .views import ProyectosListCreateView

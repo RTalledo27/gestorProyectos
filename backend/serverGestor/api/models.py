@@ -7,6 +7,7 @@ from rest_framework.exceptions import AuthenticationFailed
 
 # Create your models here.
 
+## MODELO DE USUARIOS: SERIALIZER HECHO
 class Usuarios(AbstractUser):
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
@@ -31,6 +32,9 @@ class Usuarios(AbstractUser):
             return True
         old_value = type(self).objects.get(pk=self.pk).__dict__[field]
         return getattr(self, field) != old_value
+
+## MODELO DE Roles: SERIALIZER HECHO
+
 class Roles(models.Model):
     nombre = models.CharField(max_length=30)
     descripcion = models.TextField(max_length=100)
@@ -38,6 +42,8 @@ class Roles(models.Model):
     def __str__(self):
         return self.name
     
+## MODELO DE PERMISOS: SERIALIZER HECHO
+
 class Permisos(models.Model):
     nombre = models.CharField(max_length=50, unique=True)
     descripcion= models.TextField(blank=True)
@@ -45,6 +51,8 @@ class Permisos(models.Model):
     def __str__(self):
         return self.name
     
+## MODELO DE ROLES PERMISOS: SERIALIZER HECHO
+
 class RolesPermisos(models.Model):
     rol = models.ForeignKey(Roles, on_delete=models.CASCADE)
     permiso = models.ForeignKey(Permisos, on_delete=models.CASCADE)
@@ -53,7 +61,7 @@ class RolesPermisos(models.Model):
         unique_together = ('rol', 'permiso')
 
 
-
+## MODELO DE Clientes: SERIALIZER HECHO
 class Clientes(models.Model):
     OPCIONES_GENERO = [
         ('Masculino', 'Masculino'),
@@ -79,6 +87,8 @@ class Clientes(models.Model):
     def __str__(self):
         return f"{self.nombre} {self.apellido}"       
 
+
+## MODELO DE SERVICIOS: SERIALIZER HECHO
 class Servicios(models.Model):
     OPCIONES_ESTADO = [
         ('Activo', 'Activo'),
@@ -94,6 +104,8 @@ class Servicios(models.Model):
     def __str__(self):
         return self.nombre
     
+
+## MODELO DE proyectos: SERIALIZER HECHO
 class Proyectos(models.Model):
     OPCIONES_ESTADO = [
         ('En Progreso', 'En Progreso'),
@@ -106,6 +118,7 @@ class Proyectos(models.Model):
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
     estado = models.CharField(max_length=20, choices=OPCIONES_ESTADO, default='En Progreso')
+    progreso = models.IntegerField(default=0)
     creado_en = models.DateTimeField(auto_now_add=True)
     actualizado_en = models.DateTimeField(auto_now=True)
     servicios = models.ManyToManyField(Servicios, through='ProyectoServicio')
@@ -170,6 +183,17 @@ class Tarea(models.Model):
 
     def __str__(self):
         return self.titulo
+    
+##Cuando una una subtarea sea marcada como completada\n
+# se ira calculando el total del porcecntaje de avance del proyecto
+# y se actualizara el estado del proyecto esto calculando
+# el porcentaje de avance del proyecto
+
+class SubTareas(models.Model):
+    tarea = models.ForeignKey(Tarea, on_delete=models.CASCADE)
+    titulo = models.CharField(max_length=100)
+    estado = models.BooleanField(default=False)
+
 
 class AsignacionTarea(models.Model):
     tarea = models.ForeignKey(Tarea, on_delete=models.CASCADE)

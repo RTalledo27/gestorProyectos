@@ -1,20 +1,76 @@
 import { CommonModule } from '@angular/common';
 import { Component,  } from '@angular/core';
+import { NuevoProyectoComponent } from "./nuevo-proyecto/nuevo-proyecto.component";
+import { EditarProyectoComponent } from "./editar-proyecto/editar-proyecto.component";
+import { Proyectos } from '../../../interfaces/proyectos';
+import { ProyectosService } from '../../../../services/main/proyectos.service';
 @Component({
   selector: 'app-proyectos',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NuevoProyectoComponent, EditarProyectoComponent],
   templateUrl: './proyectos.component.html',
   styleUrl: './proyectos.component.css'
 })
 
 export class ProyectosComponent {
 
-  proyectos: any[] = [
-    { id: 1, nombre: "Proyecto A", cliente: "Cliente X", fechaInicio: "2023-01-15", fechaFin: "2023-07-15", progreso: 75, estado: "En progreso", tareasPendientes: 8 },
-    { id: 2, nombre: "Proyecto B", cliente: "Cliente Y", fechaInicio: "2023-03-01", fechaFin: "2023-09-30", progreso: 50, estado: "En progreso", tareasPendientes: 12 },
-    { id: 3, nombre: "Proyecto C", cliente: "Cliente Z", fechaInicio: "2023-05-01", fechaFin: "2023-11-30", progreso: 25, estado: "En progreso", tareasPendientes: 18 },
-    { id: 4, nombre: "Proyecto D", cliente: "Cliente W", fechaInicio: "2023-02-15", fechaFin: "2023-06-30", progreso: 90, estado: "Casi terminado", tareasPendientes: 3 },
-    { id: 5, nombre: "Proyecto E", cliente: "Cliente V", fechaInicio: "2023-04-01", fechaFin: "2023-10-31", progreso: 40, estado: "En progreso", tareasPendientes: 15 },
+  nuevoProyectoVisible = false;
+  editarProyectoVisible = false;
+  proyectoEditar: Proyectos[]=[];
+  proyectos: Proyectos[] = [
+
   ];
+
+  constructor(private proyectosService: ProyectosService){
+
+  }
+
+
+
+  ngOnInit(): void {
+    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    //Add 'implements OnInit' to the class.
+    this.cargarProyectos();
+    console.table(this.proyectos);
+  }
+
+
+
+  //METODO CARGAR TODOS LOS PROYECTOS:
+  cargarProyectos(){
+    this.proyectosService.getProyectos().subscribe( {
+      next: (data: Proyectos[]) => {
+        this.proyectos = data;
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+ //METODO PARA OCULTAR Y MOSTRAR  DIV DE NUEVO PROYECTO
+  openNuevoProyectoDiv(){
+    this.nuevoProyectoVisible =true;
+  }
+
+  closeNuevoProyectoDiv(){
+    this.nuevoProyectoVisible = false;
+  }
+
+  openEditarProyectoDiv(proyecto: Proyectos){
+    if(proyecto){
+    this.proyectoEditar = [proyecto];
+    this.editarProyectoVisible = true;
+    }else{
+      this.proyectoEditar = [];
+    }
+  }
+
+  closeEditarProyectoDiv(){
+    this.editarProyectoVisible = false;
+  }
+
+
+
+
 }
