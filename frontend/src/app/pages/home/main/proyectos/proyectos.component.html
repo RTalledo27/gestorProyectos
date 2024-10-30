@@ -1,6 +1,6 @@
 <div class="p-6 bg-gray-50 rounded-lg shadow-lg">
   <div class="flex justify-between items-center mb-6">
-    <h1 class="text-3xl font-bold text-gray-800">Tareas</h1>
+    <h1 class="text-3xl font-bold text-gray-800">Proyectos</h1>
     <button (click)="openNuevoProyectoDiv()" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all">
       Nuevo Proyecto
     </button>
@@ -13,12 +13,8 @@
       class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
       <i class="fas fa-search"></i>
     </button>
-
-
-
-
-
   </div>
+
 
   <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-lg">
     <caption class="text-lg font-semibold mb-4 text-gray-800">Tabla de Gestión de Proyectos</caption>
@@ -35,7 +31,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let proyecto of proyectos" class="hover:bg-gray-50 transition-all" (click)="openEditarProyectoDiv(proyecto)">
+      <tr *ngFor="let proyecto of paginatedProyectos" class="hover:bg-gray-50 transition-all" (click)="openEditarProyectoDiv(proyecto)">
         <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.id }}</td>
         <td class="py-3 px-4 border-b text-gray-700 font-medium">{{ proyecto.nombre }}</td>
         <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.clientes?.[0]?.nombre }}</td>
@@ -46,7 +42,7 @@
             <div class="relative w-full h-2 bg-gray-200 rounded-full">
               <div class="absolute h-full bg-green-500 rounded-full" [style.width.%]="proyecto.progreso"></div>
             </div>
-            <span class="ml-2 text-sm font-medium text-gray-700">{{proyecto.progreso}}%</span>
+            <span class="ml-2 text-sm font-medium text-gray-700">{{ proyecto.progreso }}%</span>
           </div>
         </td>
         <td class="py-3 px-4 border-b">
@@ -62,7 +58,15 @@
       </tr>
     </tbody>
   </table>
-</div>
+
+  <!-- Controles de Paginación -->
+  <div class="flex justify-end space-x-4 mt-4">
+    <button (click)="previousPage()" [disabled]="currentPage === 1"
+      class="px-3 py-1 bg-gray-300 rounded-lg text-gray-700">Anterior</button>
+    <span>Página {{ currentPage }} de {{ totalPages }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages"
+      class="px-3 py-1 bg-gray-300 rounded-lg text-gray-700">Siguiente</button>
+  </div>
 
 
 <app-nuevo-proyecto *ngIf="nuevoProyectoVisible" (ocultarDiv)="closeNuevoProyectoDiv()"></app-nuevo-proyecto>

@@ -12,8 +12,10 @@ from django.shortcuts import get_object_or_404
 import datetime
 from django.utils import timezone
 from rest_framework.authtoken.models import Token
-from .models import Usuarios, TokenAutenticacion, CustomTokenAuthentication
+from .models import Usuarios, TokenAutenticacion, CustomTokenAuthentication, Clientes
+from .models import Servicios
 from .serializers import UsuariosSerializer, RolesSerializer, TareasSerializer
+from .serializers import ServiciosSerializer, ClientesSerializer
 import secrets  # Importa el módulo secrets para generar tokens
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework import generics,permissions 
@@ -146,3 +148,33 @@ class TareasDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
  ## FIN SPRINT 1
+
+ ###EXTRAAAAAA (ERICK HACKER)
+    ## SERVICIOS LIST CREATE VIEW
+class ServiciosListCreateView(generics.ListCreateAPIView):
+    queryset = Servicios.objects.all()
+    serializer_class = ServiciosSerializer
+    authentication_classes= [CustomTokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+class ServiciosDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Servicios.objects.all()
+    serializer_class = ServiciosSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes= [CustomTokenAuthentication]
+
+### CLIENTES LIST CREATE VIEW
+class ClientesListCreateView(generics.ListCreateAPIView):
+    queryset = Clientes.objects.all()
+    serializer_class = ClientesSerializer
+    authentication_classes= [CustomTokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+class ClientesDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Clientes.objects.all()
+    serializer_class = ClientesSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes= [CustomTokenAuthentication]
+
+
+

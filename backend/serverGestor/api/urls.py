@@ -2,7 +2,9 @@ from django.urls import path
 #from .views import proyectos
 from django.urls import path
 from .views import login, RolListCreateView, RolDetailView, asignarRolProyecto, TareasListCreateView,TareasDetailView, ProyectosDetailView
-from .views import ProyectosListCreateView
+from .views import ProyectosListCreateView, ServiciosDetailView, ServiciosListCreateView
+from .views import ClientesListCreateView, ClientesDetailView
+
 urlpatterns = [
     path('login/', login, name='login'),
    ## path('proyectos/',proyectos, name='proyecto'),
@@ -16,6 +18,14 @@ urlpatterns = [
     path('tareas/', TareasListCreateView.as_view(), name='tareas-list-create'),
     path('tareas/<int:pk>/', TareasDetailView.as_view(), name='tarea-detail'),
 
+
+    #RUTAS DE SERVICIOS
+    path('servicios/', ServiciosListCreateView.as_view(), name='servicios-list-create'),
+    path('servicios/<int:pk>/', ServiciosDetailView.as_view(), name='servicio-detail'),
+
+    ##RUTAS DE CLIENTES
+    path('clientes/', ClientesListCreateView.as_view(), name='clientes-list-create'),
+    path('clientes/<int:pk>/', ClientesDetailView.as_view(), name='cliente-detail'),
 ]
 
 

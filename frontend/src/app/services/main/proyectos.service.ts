@@ -59,6 +59,17 @@ export class ProyectosService {
     return this.http.post<Proyectos>(this.url,proyecto,{headers: headers});
   }
 
+  editProyecto(proyecto:Proyectos, proyectoData: Proyectos): Observable<Proyectos>{
+    const token = this.authService.getToken();
+    if (!token) {
+      this.router.navigate(['/auth/login']);
+    }
+    const headers = {
+      'Authorization': `Token ${token}`
+    };
+    return this.http.put<Proyectos>(`${this.url}${proyecto.id}/`,proyectoData,{headers: headers});
+  }
+
 
 
 

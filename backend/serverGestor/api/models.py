@@ -110,7 +110,7 @@ class Proyectos(models.Model):
     OPCIONES_ESTADO = [
         ('En Progreso', 'En Progreso'),
         ('Completado', 'Completado'),
-        ('En Pausa', 'En Pausa'),
+        ('Pendiente', 'Pendiente'),
         ('Cancelado', 'Cancelado'),
     ]
     nombre = models.CharField(max_length=100)

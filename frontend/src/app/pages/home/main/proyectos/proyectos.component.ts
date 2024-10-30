@@ -19,7 +19,12 @@ export class ProyectosComponent {
   proyectoEditar: Proyectos[]=[];
   proyectos: Proyectos[] = [
 
+
+
   ];
+
+  currentPage: number = 1;
+  itemsPerPage: number = 5;
 
   constructor(private proyectosService: ProyectosService){
 
@@ -46,6 +51,29 @@ export class ProyectosComponent {
         console.log(error);
       }
     });
+  }
+
+
+  get paginatedProyectos(): Proyectos[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    return this.proyectos.slice(start, end);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.proyectos.length / this.itemsPerPage);
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
   }
 
  //METODO PARA OCULTAR Y MOSTRAR  DIV DE NUEVO PROYECTO
