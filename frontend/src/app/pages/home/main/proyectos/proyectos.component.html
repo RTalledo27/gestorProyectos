@@ -70,4 +70,4 @@
 
 
 <app-nuevo-proyecto *ngIf="nuevoProyectoVisible" (ocultarDiv)="closeNuevoProyectoDiv()"></app-nuevo-proyecto>
-<app-editar-proyecto [proyecto]="proyectoEditar" (ocultarDiv)="closeEditarProyectoDiv()" *ngIf="editarProyectoVisible"></app-editar-proyecto>
+<app-editar-proyecto [proyecto]="proyectoEditar[0]" (ocultarDiv)="closeEditarProyectoDiv()" *ngIf="editarProyectoVisible"></app-editar-proyecto>

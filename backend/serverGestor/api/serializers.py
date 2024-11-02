@@ -1,64 +1,121 @@
-from datetime import timezone
 from rest_framework import serializers
-from .models import Usuarios, Proyectos, Roles, Servicios
-from .models import RolesPermisos, Permisos,Tarea, Clientes
-
+from .models import (
+    Usuarios, Roles, Permisos, RolesPermisos, Clientes, Servicios, Proyectos,
+    UsuariosRol, ProyectoServicio, ProyectoCliente, AsignacionProyecto, Tarea,
+    SubTareas, AsignacionTarea, AutenticacionExterna, TokenAutenticacion,
+    Reporte, EventoCalendario, IntegracionGitHub,
+)
 
 class UsuariosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuarios
-        fields = ['id','username','email','nombres','apellidos','created_at','last_login','is_active','is_staff','is_superuser','groups','user_permissions']
-        extra_kwargs = {
-            'password': {'write_only': True}
-        }
+        fields = ['id', 'username', 'email', 'nombres', 'apellidos', 'created_at', 'last_login', 'is_active']
+        extra_kwargs = {'password': {'write_only': True}}
 
-class ProyectoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Proyectos
-        fields = '__all__'
-        depth = 3
-       
+    def create(self, validated_data):
+        user = Usuarios.objects.create_user(**validated_data)
+        return user
 
-
-
-#ESTRUCTURA ROLES Y PERMISOS
 class RolesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Roles
         fields = '__all__'
 
-class PermisoSerializer(serializers.ModelSerializer):
+class PermisosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Permisos
         fields = '__all__'
 
 class RolesPermisosSerializer(serializers.ModelSerializer):
-    rol = RolesSerializer()
-    permiso = PermisoSerializer()
-
     class Meta:
         model = RolesPermisos
         fields = '__all__'
-class TareasSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tarea
-        fields = '__all__'
-        depth = 1
-    def validate_fecha_vencimiento(self, value):
-        # Validar que la fecha de vencimiento sea futura
-        if value < timezone.now().date():
-            raise serializers.ValidationError("La fecha de vencimiento no puede ser en el pasado.")
-        return value
-
 
 class ClientesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Clientes
         fields = '__all__'
-        depth = 1
 
 class ServiciosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Servicios
         fields = '__all__'
-        depth = 1
+
+class ProyectoSerializer(serializers.ModelSerializer):
+    clientes = ClientesSerializer(many=True, read_only=True)
+    servicios = ServiciosSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Proyectos
+        fields = ['id', 'nombre', 'descripcion', 'fecha_inicio', 'fecha_fin', 'estado', 'progreso', 'creado_en', 'actualizado_en', 'clientes', 'servicios']
+
+    def create(self, validated_data):
+        clientes_data = self.context['request'].data.get('clientes', [])
+        servicios_data = self.context['request'].data.get('servicios', [])
+        proyecto = Proyectos.objects.create(**validated_data)
+        for cliente_id in clientes_data:
+            ProyectoCliente.objects.create(proyecto=proyecto, cliente_id=cliente_id)
+        for servicio_id in servicios_data:
+            ProyectoServicio.objects.create(proyecto=proyecto, servicio_id=servicio_id)
+        return proyecto
+    
+
+class UsuariosRolSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UsuariosRol
+        fields = '__all__'
+
+class ProyectoServicioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProyectoServicio
+        fields = '__all__'
+
+class ProyectoClienteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProyectoCliente
+        fields = '__all__'
+
+class AsignacionProyectoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AsignacionProyecto
+        fields = '__all__'
+
+class TareasSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tarea
+        fields = '__all__'
+
+class SubTareasSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubTareas
+        fields = '__all__'
+
+class AsignacionTareaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AsignacionTarea
+        fields = '__all__'
+
+class AutenticacionExternaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AutenticacionExterna
+        fields = '__all__'
+
+class TokenAutenticacionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TokenAutenticacion
+        fields = '__all__'
+
+class ReporteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reporte
+        fields = '__all__'
+
+class EventoCalendarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EventoCalendario
+        fields = '__all__'
+
+class IntegracionGitHubSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IntegracionGitHub
+        fields = '__all__'

@@ -16,9 +16,11 @@ from .models import Usuarios, TokenAutenticacion, CustomTokenAuthentication, Cli
 from .models import Servicios
 from .serializers import UsuariosSerializer, RolesSerializer, TareasSerializer
 from .serializers import ServiciosSerializer, ClientesSerializer
+from .models import ProyectoServicio, ProyectoCliente
 import secrets  # Importa el módulo secrets para generar tokens
 from rest_framework.decorators import authentication_classes, permission_classes
-from rest_framework import generics,permissions 
+from rest_framework import generics,permissions
+
 
 
 # Create your views here.
@@ -76,9 +78,14 @@ def login(request):
 class ProyectosListCreateView(generics.ListCreateAPIView):
     queryset = Proyectos.objects.all()
     serializer_class = ProyectoSerializer
-    authentication_classes = [CustomTokenAuthentication]  # Verifica esta línea
+    authentication_classes = [CustomTokenAuthentication]
     permission_classes = [IsAuthenticated]
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"request": self.request})
+        return context
+    
 class ProyectosDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Proyectos.objects.all()
     serializer_class = ProyectoSerializer

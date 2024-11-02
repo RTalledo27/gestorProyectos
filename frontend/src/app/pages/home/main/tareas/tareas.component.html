@@ -1,7 +1,7 @@
 <div class="p-6 bg-gray-50 rounded-lg shadow-lg">
   <div class="flex justify-between items-center mb-6">
     <h1 class="text-3xl font-bold text-gray-800">Tareas</h1>
-    <button
+    <button (click)="this.openNuevaTareaDiv()"
       class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all">
       Nueva Tarea
     </button>
@@ -22,24 +22,35 @@
           <th class="py-3 px-4 text-left text-sm font-bold">Asignado a</th>
           <th class="py-3 px-4 text-left text-sm font-bold">Fecha de Vencimiento</th>
           <th class="py-3 px-4 text-left text-sm font-bold">Estado</th>
+          <th class="py-3 px-4 text-left text-sm font-bold">Acciones</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let tarea of paginatedTareas" class="border-b hover:bg-gray-50 transition-all">
+        <tr *ngFor="let tarea of paginatedTareas" class="border-b hover:bg-gray-50 transition-all" (click)="this.openEditarTareaDiv()">
           <td class="py-4 px-6 text-gray-700">{{ tarea.id }}</td>
           <td class="py-4 px-6 text-gray-700">{{ tarea.descripcion }}</td>
-          <td class="py-4 px-6 text-gray-700">{{ tarea.proyecto }}</td>
-          <td class="py-4 px-6 text-gray-700">{{ tarea.asignado }}</td>
-          <td class="py-4 px-6 text-gray-700">{{ tarea.vencimiento }}</td>
+          <td class="py-4 px-6 text-gray-700">{{ tarea.proyecto.nombre }}</td>
+          <td class="py-4 px-6 text-gray-700">{{ tarea.usuarios_asignados[0]?.nombres }}</td>
+          <td class="py-4 px-6 text-gray-700">{{ tarea.fecha_vencimiento }}</td>
           <td class="py-4 px-6">
             <span [ngClass]="{
-              'bg-green-200 text-green-800': tarea.estado === 'Completado',
-              'bg-yellow-200 text-yellow-800': tarea.estado === 'En progreso',
-              'bg-red-200 text-red-800': tarea.estado === 'Atrasado',
+              'bg-green-200 text-green-800': tarea.estado === 'Completada',
+              'bg-yellow-200 text-yellow-800': tarea.estado === 'En Progreso',
+              'bg-red-200 text-red-800': tarea.estado === 'Retrasada',
               'bg-gray-200 text-gray-800': tarea.estado === 'Pendiente'
             }" class="px-3 py-1 rounded-full text-xs font-semibold">
               {{ tarea.estado }}
             </span>
+          </td>
+          <td class="py-4 px-6 select-none">
+            <div class="flex space-x-4">
+              <button class="text-blue-500 hover:text-blue-700" (click)="this.openNuevaSubtareaDiv()">
+                <i class="fas fa-plus"></i>
+              </button>
+              <button class="text-red-500 hover:text-red-700">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -54,4 +65,8 @@
     <button (click)="nextPage()" [disabled]="currentPage === totalPages"
       class="px-3 py-1 bg-gray-300 rounded-lg text-gray-700">Siguiente</button>
   </div>
+
+  <app-nueva-tarea *ngIf="nuevaTareaVisible"></app-nueva-tarea>
+  <app-editar-tarea *ngIf="editarTareaVisible"></app-editar-tarea>
+  <app-nueva-subtarea *ngIf="nuevaSubtareaVisible"></app-nueva-subtarea>
 </div>

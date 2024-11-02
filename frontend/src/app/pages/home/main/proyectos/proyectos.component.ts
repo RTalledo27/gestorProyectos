@@ -19,8 +19,6 @@ export class ProyectosComponent {
   proyectoEditar: Proyectos[]=[];
   proyectos: Proyectos[] = [
 
-
-
   ];
 
   currentPage: number = 1;

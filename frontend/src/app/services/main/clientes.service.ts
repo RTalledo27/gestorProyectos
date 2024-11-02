@@ -30,6 +30,18 @@ export class ClientesService {
     return this.http.get<Clientes[]>(this.urlApiClientes,{headers: headers});
   }
 
+
+  getCliente(clienteId: Number): Observable<Clientes>{
+    const token = this.authService.getToken();
+    if (!token) {
+      this.router.navigate(['/auth/login']);
+    }
+    const headers = {
+      'Authorization': `Token ${token}`
+      };
+    return this.http.get<Clientes>(`${this.urlApiClientes}${clienteId}/`,{headers: headers});
+  }
+
 }
 
 
