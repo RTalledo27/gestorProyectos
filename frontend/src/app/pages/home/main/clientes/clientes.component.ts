@@ -1,35 +1,48 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-
-interface Cliente {
-  id: number;
-  nombre: string;
-  contacto: string;
-  email: string;
-  telefono: string;
-  proyectosActivos: number;
-}
+import { NuevoClienteComponent } from './nuevo-cliente/nuevo-cliente.component';
+import { EditarClienteComponent } from './editar-cliente/editar-cliente.component';
+import { Clientes } from '../../../interfaces/clientes';
+import { ClientesService } from '../../../../services/main/clientes.service';
 
 @Component({
   selector: 'app-clientes',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NuevoClienteComponent, EditarClienteComponent],
   templateUrl: './clientes.component.html',
   styleUrls: ['./clientes.component.css']
 })
 export class ClientesComponent {
-  clientes: Cliente[] = [
-    { id: 1, nombre: "Empresa ABC", contacto: "Juan Pérez", email: "juan@empresaabc.com", telefono: "123-456-7890", proyectosActivos: 2 },
-    { id: 2, nombre: "Corporación XYZ", contacto: "María López", email: "maria@corpxyz.com", telefono: "098-765-4321", proyectosActivos: 1 },
-    { id: 3, nombre: "Industrias 123", contacto: "Carlos Rodríguez", email: "carlos@industrias123.com", telefono: "456-789-0123", proyectosActivos: 3 },
-    { id: 4, nombre: "Tech Solutions", contacto: "Ana Martínez", email: "ana@techsolutions.com", telefono: "789-012-3456", proyectosActivos: 0 },
-    { id: 5, nombre: "Global Services", contacto: "Pedro Sánchez", email: "pedro@globalservices.com", telefono: "321-654-0987", proyectosActivos: 1 },
-  ];
+
+  nuevoClienteVisible = false;
+  editarClienteVisible = false;
+  clienteEditar: Clientes[] = [];
+  clientes: Clientes[] = [];
 
   currentPage: number = 1;
-  itemsPerPage: number = 5; //  Numero de items por pag
+  itemsPerPage: number = 5;
 
-  get paginatedClientes(): Cliente[] {
+  constructor(private clientesService: ClientesService) { }
+
+  ngOnInit(): void {
+    // Llamado después del constructor, inicializa las propiedades de entrada y la primera llamada a ngOnChanges.
+    this.cargarClientes();
+    console.table(this.clientes);
+  }
+
+  // Método para cargar todos los clientes
+  cargarClientes() {
+    this.clientesService.getClientes().subscribe({
+      next: (data: Clientes[]) => {
+        this.clientes = data;
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+  get paginatedClientes(): Clientes[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     const end = start + this.itemsPerPage;
     return this.clientes.slice(start, end);
@@ -49,5 +62,28 @@ export class ClientesComponent {
     if (this.currentPage > 1) {
       this.currentPage--;
     }
+  }
+
+  // Método para mostrar y ocultar el div de Nuevo Cliente
+  openNuevoClienteDiv() {
+    this.nuevoClienteVisible = true;
+  }
+
+  closeNuevoClienteDiv() {
+    this.nuevoClienteVisible = false;
+  }
+
+  // Método para mostrar y ocultar el div de Editar Cliente
+  openEditarClienteDiv(cliente: Clientes) {
+    if (cliente) {
+      this.clienteEditar = [cliente];
+      this.editarClienteVisible = true;
+    } else {
+      this.clienteEditar = [];
+    }
+  }
+
+  closeEditarClienteDiv() {
+    this.editarClienteVisible = false;
   }
 }
