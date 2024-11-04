@@ -48,6 +48,7 @@ class ProyectoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Proyectos
         fields = ['id', 'nombre', 'descripcion', 'fecha_inicio', 'fecha_fin', 'estado', 'progreso', 'creado_en', 'actualizado_en', 'clientes', 'servicios']
+        depth = 2
 
     def create(self, validated_data):
         clientes_data = self.context['request'].data.get('clientes', [])
@@ -79,11 +80,13 @@ class AsignacionProyectoSerializer(serializers.ModelSerializer):
     class Meta:
         model = AsignacionProyecto
         fields = '__all__'
+        depth = 1
 
 class TareasSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tarea
-        fields = '__all__'
+        fields = ['id', 'titulo', 'descripcion', 'estado', 'prioridad', 'fecha_vencimiento', 'proyecto']
+        extra_kwargs = {'proyecto': {'required': True}}
 
 class SubTareasSerializer(serializers.ModelSerializer):
     class Meta:
@@ -119,3 +122,9 @@ class IntegracionGitHubSerializer(serializers.ModelSerializer):
     class Meta:
         model = IntegracionGitHub
         fields = '__all__'
+
+class SubTareasSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubTareas
+        fields = ['id', 'titulo', 'estado', 'tarea']
+        extra_kwargs = {'tarea': {'required': True}}

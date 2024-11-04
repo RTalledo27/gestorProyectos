@@ -4,7 +4,7 @@ from django.urls import path
 from .views import login, RolListCreateView, RolDetailView, asignarRolProyecto, TareasListCreateView,TareasDetailView, ProyectosDetailView
 from .views import ProyectosListCreateView, ServiciosDetailView, ServiciosListCreateView
 from .views import ClientesListCreateView, ClientesDetailView
-
+from .views import SubtareasListCreateView, SubtareasDetailView
 urlpatterns = [
     path('login/', login, name='login'),
    ## path('proyectos/',proyectos, name='proyecto'),
@@ -26,6 +26,11 @@ urlpatterns = [
     ##RUTAS DE CLIENTES
     path('clientes/', ClientesListCreateView.as_view(), name='clientes-list-create'),
     path('clientes/<int:pk>/', ClientesDetailView.as_view(), name='cliente-detail'),
+
+    ##RUTA DE SUBTAREAS
+    path('subtareas/', SubtareasListCreateView.as_view(), name='subtareas-list-create'),
+    path('subtareas/<int:pk>/', SubtareasDetailView.as_view(), name='subtarea-detail'),
+
 ]
 
 

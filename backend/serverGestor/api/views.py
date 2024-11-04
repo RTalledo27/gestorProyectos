@@ -16,7 +16,8 @@ from .models import Usuarios, TokenAutenticacion, CustomTokenAuthentication, Cli
 from .models import Servicios
 from .serializers import UsuariosSerializer, RolesSerializer, TareasSerializer
 from .serializers import ServiciosSerializer, ClientesSerializer
-from .models import ProyectoServicio, ProyectoCliente
+from .serializers import SubTareasSerializer
+from .models import ProyectoServicio, ProyectoCliente,SubTareas
 import secrets  # Importa el módulo secrets para generar tokens
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework import generics,permissions
@@ -151,7 +152,23 @@ class TareasDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes= [CustomTokenAuthentication]
 
- 
+class SubtareasListCreateView(generics.ListCreateAPIView):
+    serializer_class = SubTareasSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [CustomTokenAuthentication]
+
+    def get_queryset(self):
+        queryset = SubTareas.objects.all()
+        tarea_id = self.request.query_params.get('tarea', None)
+        if tarea_id is not None:
+            queryset = queryset.filter(tarea_id=tarea_id)
+        return queryset
+
+class SubtareasDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = SubTareas.objects.all()
+    serializer_class = SubTareasSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [CustomTokenAuthentication]
 
 
  ## FIN SPRINT 1
