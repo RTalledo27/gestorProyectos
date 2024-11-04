@@ -1,27 +1,105 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { NuevoServicioComponent } from './nuevo-servicio/nuevo-servicio.component';
+import { EditarServicioComponent } from './editar-servicio/editar-servicio.component';
+import { Servicios } from '../../../interfaces/servicios';
+import { ServiciosService } from '../../../../services/main/servicios.service';
 
-interface Servicio {
-  id: number;
-  nombre: string;
-  descripcion: string;
-  icono: string;
-  proyectos: number;
-}
 @Component({
   selector: 'app-servicios',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NuevoServicioComponent, EditarServicioComponent],
   templateUrl: './servicios.component.html',
-  styleUrl: './servicios.component.css'
+  styleUrls: ['./servicios.component.css']
 })
 export class ServiciosComponent {
-  servicios: Servicio[] = [
-    { id: 1, nombre: "Desarrollo Web", descripcion: "Creación de sitios web y aplicaciones web personalizadas", icono: "fas fa-code", proyectos: 5 },
-    { id: 2, nombre: "Diseño UX/UI", descripcion: "Diseño de interfaces de usuario intuitivas y atractivas", icono: "fas fa-paint-brush", proyectos: 3 },
-    { id: 3, nombre: "Desarrollo de Backend", descripcion: "Implementación de lógica de servidor y APIs", icono: "fas fa-server", proyectos: 4 },
-    { id: 4, nombre: "Bases de Datos", descripcion: "Diseño y optimización de bases de datos", icono: "fas fa-database", proyectos: 2 },
-    { id: 5, nombre: "Cloud Computing", descripcion: "Soluciones en la nube y servicios de hosting", icono: "fas fa-cloud", proyectos: 3 },
-    { id: 6, nombre: "Ciberseguridad", descripcion: "Protección de sistemas y datos contra amenazas", icono: "fas fa-shield-alt", proyectos: 1 },
-  ];
+
+  nuevoServicioVisible = false;
+  editarServicioVisible = false;
+  servicioEditar: Servicios[] = [];
+  servicios: Servicios[] = [];
+
+  currentPage: number = 1;
+  itemsPerPage: number = 5;
+
+  constructor(private serviciosService: ServiciosService) { }
+
+  ngOnInit(): void {
+    this.cargarServicios();
+  }
+
+  cargarServicios() {
+    this.serviciosService.getServicios().subscribe({
+      next: (data: Servicios[]) => {
+        this.servicios = data;
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+  get paginatedServicios(): Servicios[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    return this.servicios.slice(start, end);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.servicios.length / this.itemsPerPage);
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+
+  openNuevoServicioDiv() {
+    this.nuevoServicioVisible = true;
+  }
+
+  closeNuevoServicioDiv() {
+    this.nuevoServicioVisible = false;
+    this.cargarServicios();
+  }
+
+  openEditarServicioDiv(servicio: Servicios) {
+    if (servicio) {
+      this.servicioEditar = [servicio];
+      this.editarServicioVisible = true;
+    } else {
+      this.servicioEditar = [];
+    }
+  }
+
+  closeEditarServicioDiv() {
+    this.editarServicioVisible = false;
+    this.cargarServicios();
+  }
+
+  eliminarServicio(servicioId: number | undefined) {
+    if (servicioId === undefined) {
+      console.error('El ID del servicio es undefined');
+      return;
+    }
+
+    if (confirm('¿Estás seguro de que deseas eliminar este servicio?')) {
+      this.serviciosService.deleteServicio(servicioId).subscribe({
+        next: () => {
+          console.log('Servicio eliminado');
+          this.cargarServicios();
+        },
+        error: (error) => {
+          console.error('Error al eliminar el servicio:', error);
+        }
+      });
+    }
+  }
 }
