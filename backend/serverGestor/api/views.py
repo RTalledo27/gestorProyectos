@@ -16,13 +16,19 @@ from .models import Usuarios, TokenAutenticacion, CustomTokenAuthentication, Cli
 from .models import Servicios
 from .serializers import UsuariosSerializer, RolesSerializer, TareasSerializer
 from .serializers import ServiciosSerializer, ClientesSerializer
-from .serializers import SubTareasSerializer
+from .models import Cargos
+from .serializers import SubTareasSerializer, CargosSerializer
 from .models import ProyectoServicio, ProyectoCliente,SubTareas
 import secrets  # Importa el módulo secrets para generar tokens
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework import generics,permissions
+from django.db.models import Count, Q
+from .models import Usuarios, AsignacionProyecto, Proyectos
 
 
+from .models import Proyectos, Tarea, Usuarios, Reporte
+from django.utils import timezone
+from datetime import timedelta
 
 # Create your views here.
 
@@ -201,4 +207,115 @@ class ClientesDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes= [CustomTokenAuthentication]
 
 
+##USUARIOS LIST VIEW
+class UsuariosListView(generics.ListCreateAPIView):
+    queryset = Usuarios.objects.all()
+    serializer_class = UsuariosSerializer
+    authentication_classes= [CustomTokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"request": self.request})
+        return context
+
+##USUARIOS DETAIL VIEW
+class UsuariosDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Usuarios.objects.all()
+    serializer_class = UsuariosSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes= [CustomTokenAuthentication]
+
+class ProyectosActivosCountView(generics.RetrieveAPIView):
+    queryset = Usuarios.objects.all()
+    serializer_class = UsuariosSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [CustomTokenAuthentication]
+
+    def get(self, request):
+        proyectos_activos = AsignacionProyecto.objects.filter(
+            proyecto__estado__in=['En Progreso', 'Pendiente']
+        ).values('usuario').annotate(count=Count('proyecto')).order_by('usuario')
+
+        return Response(dict(proyectos_activos.values_list('usuario', 'count')))
+
+##CARGOS LIST VIEW
+class CargosListView(generics.ListCreateAPIView):
+    queryset = Cargos.objects.all()
+    serializer_class = CargosSerializer
+    authentication_classes= [CustomTokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"request": self.request})
+        return context
+
+##CARGOS DETAIL VIEW
+class CargosDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Cargos.objects.all()
+    serializer_class = CargosSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes= [CustomTokenAuthentication]
+
+
+
+##DASHBOARD VIEW
+class DashboardDataView(generics.RetrieveAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [CustomTokenAuthentication]
+
+    def get(self, request):
+        # Proyectos Activos
+        proyectos_activos = Proyectos.objects.filter(estado__in=['En Progreso', 'Pendiente']).count()
+        proyectos_nuevos = Proyectos.objects.filter(
+            creado_en__gte=timezone.now() - timedelta(days=30)
+        ).count()
+
+        # Tareas Pendientes
+        tareas_pendientes = Tarea.objects.filter(estado='Pendiente').count()
+        tareas_alta_prioridad = Tarea.objects.filter(estado='Pendiente', prioridad='Alta').count()
+
+        # Equipo
+        miembros_equipo = Usuarios.objects.filter(is_active=True).count()
+        miembros_nuevos = Usuarios.objects.filter(
+            created_at__gte=timezone.now() - timedelta(days=30)
+        ).count()
+
+        # Reportes Generados
+        reportes_semana = Reporte.objects.filter(
+            creado_en__gte=timezone.now() - timedelta(days=7)
+        ).count()
+
+        # Progreso de Proyectos
+        proyectos_progreso = Proyectos.objects.filter(estado='En Progreso').order_by('-progreso')[:3]
+        proyectos_data = [
+            {
+                'nombre': proyecto.nombre,
+                'progreso': proyecto.progreso
+            } for proyecto in proyectos_progreso
+        ]
+
+        # Tareas Recientes
+        tareas_recientes = Tarea.objects.all().order_by('-creado_en')[:3]
+        tareas_data = [
+            {
+                'titulo': tarea.titulo,
+                'estado': tarea.estado,
+                'fecha_vencimiento': tarea.fecha_vencimiento
+            } for tarea in tareas_recientes
+        ]
+
+        return Response({
+            'proyectos_activos': proyectos_activos,
+            'proyectos_nuevos': proyectos_nuevos,
+            'tareas_pendientes': tareas_pendientes,
+            'tareas_alta_prioridad': tareas_alta_prioridad,
+            'miembros_equipo': miembros_equipo,
+            'miembros_nuevos': miembros_nuevos,
+            'reportes_semana': reportes_semana,
+            'proyectos_progreso': proyectos_data,
+            'tareas_recientes': tareas_data
+        })
 

@@ -7,6 +7,15 @@ from rest_framework.exceptions import AuthenticationFailed
 
 # Create your models here.
 
+
+##MODELO CARGO
+class Cargos(models.Model):
+    nombre = models.CharField(max_length=50, unique=True)
+    descripcion = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.nombre  
+    
 ## MODELO DE USUARIOS: SERIALIZER HECHO
 class Usuarios(AbstractUser):
     username = models.CharField(max_length=150, unique=True)
@@ -17,7 +26,8 @@ class Usuarios(AbstractUser):
     created_at = models.DateTimeField(default=timezone.now)
     last_login = models.DateTimeField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
-
+    cargo = models.ForeignKey(Cargos, on_delete=models.SET_NULL, null=True, blank=True)
+    
     def save(self, *args, **kwargs):
         # Hashear la contraseña antes de guardar si es nueva o fue modificada
         if not self.pk or self.has_changed('password'):
@@ -32,6 +42,9 @@ class Usuarios(AbstractUser):
             return True
         old_value = type(self).objects.get(pk=self.pk).__dict__[field]
         return getattr(self, field) != old_value
+    
+
+
 
 ## MODELO DE Roles: SERIALIZER HECHO
 

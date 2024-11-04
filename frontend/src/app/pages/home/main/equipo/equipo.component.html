@@ -2,22 +2,21 @@
   <h1 class="text-4xl font-extrabold mb-8 text-gray-800">Equipo</h1>
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <div *ngFor="let miembro of miembros"
-      class="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all transform hover:scale-105">
+    <div *ngFor="let miembro of equipo"
+         class="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all transform hover:scale-105">
       <div class="flex items-center mb-6">
-        <div
-          class="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mr-4">
-          {{ miembro.nombre.charAt(0) }}
+        <div class="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mr-4">
+          {{ miembro.nombres.charAt(0) }}
         </div>
         <div>
-          <h2 class="text-2xl font-bold text-gray-700">{{ miembro.nombre }}</h2>
-          <p class="text-gray-500">{{ miembro.cargo }}</p>
+          <h2 class="text-2xl font-bold text-gray-700">{{ miembro.nombres }} {{ miembro.apellidos }}</h2>
+          <p class="text-gray-500">{{ miembro.cargo?.nombre || 'Sin cargo asignado' }}</p>
         </div>
       </div>
       <p class="text-gray-600 mb-4">{{ miembro.email }}</p>
       <div
         class="bg-gradient-to-r from-blue-400 to-blue-600 text-white text-sm font-semibold px-3 py-1 rounded-full inline-block">
-        {{ miembro.proyectos }} {{ miembro.proyectos === 1 ? 'proyecto' : 'proyectos' }} activos
+        {{ miembro.proyectos_activos }} {{ miembro.proyectos_activos === 1 ? 'proyecto' : 'proyectos' }} activos
       </div>
     </div>
   </div>
