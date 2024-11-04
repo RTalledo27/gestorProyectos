@@ -25,12 +25,9 @@ export class ClientesComponent {
   constructor(private clientesService: ClientesService) { }
 
   ngOnInit(): void {
-    // Llamado después del constructor, inicializa las propiedades de entrada y la primera llamada a ngOnChanges.
     this.cargarClientes();
-    console.table(this.clientes);
   }
 
-  // Método para cargar todos los clientes
   cargarClientes() {
     this.clientesService.getClientes().subscribe({
       next: (data: Clientes[]) => {
@@ -64,16 +61,15 @@ export class ClientesComponent {
     }
   }
 
-  // Método para mostrar y ocultar el div de Nuevo Cliente
   openNuevoClienteDiv() {
     this.nuevoClienteVisible = true;
   }
 
   closeNuevoClienteDiv() {
     this.nuevoClienteVisible = false;
+    this.cargarClientes(); 
   }
 
-  // Método para mostrar y ocultar el div de Editar Cliente
   openEditarClienteDiv(cliente: Clientes) {
     if (cliente) {
       this.clienteEditar = [cliente];
@@ -85,5 +81,25 @@ export class ClientesComponent {
 
   closeEditarClienteDiv() {
     this.editarClienteVisible = false;
+    this.cargarClientes(); 
+  }
+
+  eliminarCliente(clienteId: number | undefined) {
+    if (clienteId === undefined) {
+      console.error('El ID del cliente es undefined');
+      return;
+    }
+
+    if (confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
+      this.clientesService.deleteCliente(clienteId).subscribe({
+        next: () => {
+          console.log('Cliente eliminado');
+          this.cargarClientes(); 
+        },
+        error: (error) => {
+          console.error('Error al eliminar el cliente:', error);
+        }
+      });
+    }
   }
 }
