@@ -16,7 +16,7 @@ from .models import Usuarios, TokenAutenticacion, CustomTokenAuthentication, Cli
 from .models import Servicios
 from .serializers import UsuariosSerializer, RolesSerializer, TareasSerializer
 from .serializers import ServiciosSerializer, ClientesSerializer
-from .models import Cargos
+from .models import Cargos 
 from .serializers import SubTareasSerializer, CargosSerializer
 from .models import ProyectoServicio, ProyectoCliente,SubTareas
 import secrets  # Importa el módulo secrets para generar tokens
@@ -259,6 +259,47 @@ class CargosDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes= [CustomTokenAuthentication]
 
+##ASIGNACION DE PROYECTOS: 
+class AsignacionProyectosView(generics.ListCreateAPIView):
+    queryset = AsignacionProyecto.objects.all()
+    serializer_class =ProyectoSerializer
+    permission_classes= [IsAuthenticated]
+    authentication_classes= [CustomTokenAuthentication]
+
+    def post(self, request, *args, **kwargs):
+        proyecto_id = request.data.get('proyecto_id')
+        usuario_id = request.data.get('usuario_id')
+        rol=request.data.get('rol')
+
+        ##VERIFICAR SI PROYECTO EXISTE
+        try:
+            proyecto = Proyectos.objects.get(pk=proyecto_id)
+        except Proyectos.DoesNotExist:
+            return Response({'error': 'Proyecto no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+        ##VERIFICAR SI USUARIO EXISTE
+        try:
+            usuario = Usuarios.objects.get(pk=usuario_id)
+        except Usuarios.DoesNotExist:
+            return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+        ##VERIFICAR SI PROYECTO Y USUARIO NO ESTAN ASIGNADOS
+        try:
+            asignacion = AsignacionProyecto.objects.get(proyecto=proyecto, usuario=usuario)
+        except AsignacionProyecto.DoesNotExist:
+            return Response({'error': 'Usuario no está asignado a este proyecto'}, status=status.HTTP_404_NOT_FOUND)
+    
+        ##ASIGNAR PROYECTO
+        asignacion, created = AsignacionProyecto.objects.update_or_create(
+            proyecto=proyecto,
+            usuario=usuario,
+            defaults={'rol': rol}
+        )
+
+        if created:
+            return Response({'message': 'Proyecto asignado exitosamente al usuario con el rol especificado.'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'message': 'Rol actualizado para el usuario en este proyecto.'}, status=status.HTTP_200_OK)
 
 
 ##DASHBOARD VIEW

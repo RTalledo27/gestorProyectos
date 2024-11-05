@@ -151,7 +151,7 @@ class UsuariosRol(models.Model):
 class ProyectoServicio(models.Model):
     proyecto = models.ForeignKey(Proyectos, on_delete=models.CASCADE)
     servicio = models.ForeignKey(Servicios, on_delete=models.CASCADE)
-
+    
     class Meta:
         unique_together = ('proyecto', 'servicio')
 
