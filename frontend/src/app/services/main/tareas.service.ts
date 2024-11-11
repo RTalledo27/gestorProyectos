@@ -11,57 +11,32 @@ import { SubTarea } from '../../pages/interfaces/sub-tarea';
 })
 export class TareasService {
 
-  private apiUrl= 'http://127.0.0.1:8000/api/tareas/';
+  private apiUrl= 'http://127.0.0.1:8000/api';
   private subtareasUrl= 'http://127.0.0.1:8000/api/subtareas/';
-  constructor(private http:HttpClient,private authService: AuthentificationService, private router:Router) { }
+  constructor(private http: HttpClient, private authService: AuthentificationService, private router: Router) { }
 
-  getTareas(): Observable<Tareas[]>{
-
-    const token = this.authService.getToken();
-
-    if(!token){
-      this.router.navigate(['/auth/login']);
-    }
-
-    const headers = {
-      'Authorization': `Token ${token}`
-    }
-
-    return this.http.get<Tareas[]>(this.apiUrl,{headers: headers});
+  getTareas(): Observable<Tareas[]> {
+    return this.http.get<Tareas[]>(`${this.apiUrl}/tareas/`);
   }
 
-
-  createTareas(tarea: Tareas): Observable<Tareas>{
-    const token = this.authService.getToken();
-    if (!token) {
-      this.router.navigate(['/auth/login']);
-    }
-    const headers = {
-      'Authorization': `Token ${token}`
-    };
-    return this.http.post<Tareas>(this.apiUrl,tarea,{headers: headers});
+  createTareas(tarea: Tareas): Observable<Tareas> {
+    return this.http.post<Tareas>(`${this.apiUrl}/tareas/`, tarea);
   }
 
-  editTarea(tarea: Tareas, tareaData: Tareas): Observable<Tareas>{
-    const token = this.authService.getToken();
-    if (!token) {
-      this.router.navigate(['/auth/login']);
-    }
-    const headers = {
-      'Authorization': `Token ${token}`
-    };
-    return this.http.put<Tareas>(`${this.apiUrl}${tarea.id}/`,tareaData,{headers: headers});
+  updateTaskPriority(taskId: number, priority: string): Observable<Tareas> {
+    return this.http.patch<Tareas>(`${this.apiUrl}/tareas/${taskId}/`, { prioridad: priority });
   }
 
-  deletTarea(tarea: Tareas): Observable<Tareas>{
-    const token = this.authService.getToken();
-    if (!token) {
-      this.router.navigate(['/auth/login']);
-    }
-    const headers = {
-      'Authorization': `Token ${token}`
-    };
-    return this.http.delete<Tareas>(`${this.apiUrl}${tarea.id}/`,{headers: headers});
+  updateTaskStatus(taskId: number, status: string): Observable<Tareas> {
+    return this.http.patch<Tareas>(`${this.apiUrl}/tareas/${taskId}/`, { estado: status });
+  }
+
+  editTarea(id: number, tarea: Tareas): Observable<Tareas> {
+    return this.http.put<Tareas>(`${this.apiUrl}/tareas/${id}/`, tarea);
+  }
+
+  deletTarea(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/tareas/${id}/`);
   }
 
 

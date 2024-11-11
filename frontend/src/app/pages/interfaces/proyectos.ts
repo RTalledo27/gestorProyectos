@@ -13,4 +13,5 @@ export interface Proyectos {
   clientes?: Clientes[];
   creado_en?: Date;
   actualizado_en?: Date;
+  tareas_pendientes: number;
 }

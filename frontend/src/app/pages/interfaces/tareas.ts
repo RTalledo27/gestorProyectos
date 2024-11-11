@@ -4,7 +4,7 @@ import { Usuarios } from "./usuarios";
 
 export interface Tareas {
   id: number;  // ID autogenerado al crear en el backend
-  proyecto?: Proyectos[]; // ID del proyecto al que pertenece
+  proyecto?: Proyectos; // ID del proyecto al que pertenece
   titulo: string;
   descripcion?: string;
   estado: 'Pendiente' | 'En Progreso' | 'Completada' | 'Retrasada';

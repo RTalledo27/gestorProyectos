@@ -1,92 +1,74 @@
-import { Proyectos } from './../../../../interfaces/proyectos';
-import { Component, EventEmitter, Output } from '@angular/core';
-import { Tareas } from '../../../../interfaces/tareas';
+import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 import { TareasService } from '../../../../../services/main/tareas.service';
 import { ProyectosService } from '../../../../../services/main/proyectos.service';
+import { Tareas } from '../../../../interfaces/tareas';
+import { Proyectos } from '../../../../interfaces/proyectos';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-nueva-tarea',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './nueva-tarea.component.html',
-  styleUrl: './nueva-tarea.component.css'
+  styleUrls: ['./nueva-tarea.component.css']
 })
-export class NuevaTareaComponent {
-
-  @Output() save = new EventEmitter<Tareas>();
+export class NuevaTareaComponent implements OnInit {
   @Output() ocultarDiv = new EventEmitter<void>();
-  nuevaTareaForm: FormGroup;
-  tareas: Tareas[] = [];
+  @Output() tareaCreada = new EventEmitter<Tareas>();
+
+  formNuevaTarea: FormGroup;
   proyectos: Proyectos[] = [];
 
-
-  constructor(private tareasService: TareasService, private fb: FormBuilder, private proyectosService: ProyectosService) {
-
-    this.nuevaTareaForm = this.fb.group({
-       proyecto: [null, [Validators.required]],  // Use `null` for a single selection
-  titulo: ['', [Validators.required]],
-  descripcion: ['', [Validators.required]],
-  estado: ['', [Validators.required]],
-  prioridad: ['', [Validators.required]],
-  fecha_vencimiento: ['', [Validators.required]]
-  //usuarios_asignados: [[], [Validators.required]],
-  //subTareas: [[], [Validators.required]]
-
+  constructor(
+    private fb: FormBuilder,
+    private tareasService: TareasService,
+    private proyectosService: ProyectosService
+  ) {
+    this.formNuevaTarea = this.fb.group({
+      titulo: ['', [Validators.required]],
+      descripcion: ['', [Validators.required]],
+      fecha_vencimiento: ['', [Validators.required]],
+      estado: ['Pendiente', [Validators.required]],
+      prioridad: ['Media', [Validators.required]],
+      proyecto_id: [null, [Validators.required]]
     });
-
   }
 
   ngOnInit(): void {
-    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    //Add 'implements OnInit' to the class.
-    this.cargarProyectos()
-
+    this.cargarProyectos();
   }
 
-  onSubmit() {
-    if (this.nuevaTareaForm.valid) {
-      const nuevaTarea = {
-        ...this.nuevaTareaForm.value,
-        proyecto_id: this.nuevaTareaForm.value.proyecto  // Directly use `proyecto` as the ID
-      };
-
-      this.tareasService.createTareas(nuevaTarea).subscribe({
-        next: (tareaCreada) => {
-          this.ocultarDivEditarTarea();
-        },
-        error: (error) => {
-          console.error('Error al crear la tarea:', error);
-        }
-      });
-    }
-  }
-
-
-  cargarProyectos(){
+  cargarProyectos() {
     this.proyectosService.getProyectos().subscribe({
       next: (data: Proyectos[]) => {
         this.proyectos = data;
       },
       error: (error) => {
-        console.log(error);
+        console.error('Error loading projects:', error);
       }
     });
-
   }
 
-  ocultarDivEditarTarea() {
+  onSubmit() {
+    if (this.formNuevaTarea.valid) {
+      const nuevaTarea = {
+        ...this.formNuevaTarea.value,
+        proyecto: this.formNuevaTarea.value.proyecto_id
+      }
+      this.tareasService.createTareas(nuevaTarea).subscribe({
+        next: (tareaCreada) => {
+          this.tareaCreada.emit(tareaCreada);
+          this.ocultarDiv.emit();
+        },
+        error: (error) => {
+          console.error('Error creating task:', error);
+        }
+      });
+    }
+  }
+
+  cerrarModal() {
     this.ocultarDiv.emit();
   }
-
-
-  onCancel(): void {
-    this.ocultarDiv.emit();
-  }
-
-  hasError(controlName: string, errorName: string): boolean {
-    return this.nuevaTareaForm.get(controlName)?.hasError(errorName) ?? false;
-  }
-
 }

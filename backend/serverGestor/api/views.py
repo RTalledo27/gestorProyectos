@@ -360,3 +360,17 @@ class DashboardDataView(generics.RetrieveAPIView):
             'tareas_recientes': tareas_data
         })
 
+@api_view(['GET'])
+@authentication_classes([CustomTokenAuthentication])
+@permission_classes([IsAuthenticated])
+def tareas_pendientes_por_proyecto(request):
+    proyectos = Proyectos.objects.annotate(
+        tareas_pendientes=Count('tarea', filter=Q(tarea__estado='Pendiente'))
+    )
+    
+    data = {
+        str(proyecto.id): proyecto.tareas_pendientes 
+        for proyecto in proyectos
+    }
+    
+    return Response(data, status=status.HTTP_200_OK)

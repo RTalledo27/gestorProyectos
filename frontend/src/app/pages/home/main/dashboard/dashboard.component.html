@@ -56,9 +56,9 @@
         <div *ngFor="let tarea of dashboardData.tareas_recientes" class="flex items-center">
           <i class="fas mr-3" [ngClass]="{
             'fa fa-check-circle text-green-600': tarea.estado === 'Completada',
-            'fa fa-clock text-yellow-600': tarea.estado === 'En Proceso',
-            'fa fa-exclamation-circle text-red-600': tarea.estado === 'Retrasada'
-          }"></i>
+            'fa fa-clock text-yellow-600': tarea.estado === 'En Progreso',
+            'fa fa-exclamation-circle text-red-600': tarea.estado === 'Retrasada',
+            'fa fa-exclamation-triangle text-yellow-500': tarea.estado === 'Pendiente',          }"></i>
           <div>
             <p class="text-sm font-medium text-gray-700">{{ tarea.titulo }}</p>
             <p class="text-xs text-gray-500">

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Proyectos } from '../../pages/interfaces/proyectos';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin, map } from 'rxjs';
 import { AuthentificationService } from '../auth/authentification.service';
 
 @Injectable({
@@ -18,19 +18,36 @@ export class ProyectosService {
   //TODO: Añadir métodos para obtener los datos de un proyecto específico
   //TODO: Añadir métodos para obtener los datos de un usuario específico
 
-  getProyectos(): Observable<Proyectos[]>{
-
+  getProyectos(): Observable<Proyectos[]> {
     const token = this.authService.getToken();
     if (!token) {
       this.router.navigate(['/auth/login']);
     }
-
     const headers = {
       'Authorization': `Token ${token}`
     };
+    return forkJoin({
+      proyectos: this.http.get<Proyectos[]>(this.url, {headers}),
+      tareasPendientes: this.http.get<{ [key: string]: number }>(`${this.url}tareas-pendientes/`, { headers })
+    }).pipe(
+      map(({ proyectos, tareasPendientes }) =>
+        proyectos.map(proyecto => ({
+          ...proyecto,
+          tareas_pendientes: tareasPendientes[proyecto.id ? proyecto.id.toString() : ''] || 0,
+        }))
+      )
+    );
+  }
 
-    return this.http.get<Proyectos[]>(this.url,{headers: headers});
-
+  getProyectoById(id: number): Observable<Proyectos>{
+    const token = this.authService.getToken();
+    if (!token) {
+      this.router.navigate(['/auth/login']);
+    }
+    const headers = {
+      'Authorization': `Token ${token}`
+    };
+    return this.http.get<Proyectos>(`${this.url}${id}/`,{headers: headers});
   }
 
 

@@ -6,68 +6,103 @@
     </button>
   </div>
 
-  <div class="relative flex items-center mb-6">
-    <input type="text" placeholder="Buscar proyectos..."
-      class="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full max-w-sm shadow-sm" />
-    <button
-      class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
-      <i class="fas fa-search"></i>
-    </button>
+  <div class="flex flex-wrap gap-4 mb-6">
+    <div class="flex-1 min-w-[200px]">
+      <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearch()" placeholder="Buscar proyectos..."
+        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    </div>
+    <div>
+      <select [(ngModel)]="estadoFilter" (ngModelChange)="onFilterChange()"
+        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+        <option value="">Todos los estados</option>
+        <option value="En Progreso">En Progreso</option>
+        <option value="Completado">Completado</option>
+        <option value="Pendiente">Pendiente</option>
+      </select>
+    </div>
   </div>
 
-
-  <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-lg">
-    <caption class="text-lg font-semibold mb-4 text-gray-800">Tabla de Gestión de Proyectos</caption>
-    <thead class="bg-blue-100 text-blue-800">
-      <tr>
-        <th class="py-3 px-4 border-b text-left font-semibold">ID</th>
-        <th class="py-3 px-4 border-b text-left font-semibold">Nombre del Proyecto</th>
-        <th class="py-3 px-4 border-b text-left font-semibold">Cliente</th>
-        <th class="py-3 px-4 border-b text-left font-semibold">Fecha de Inicio</th>
-        <th class="py-3 px-4 border-b text-left font-semibold">Fecha de Fin</th>
-        <th class="py-3 px-4 border-b text-left font-semibold">Progreso</th>
-        <th class="py-3 px-4 border-b text-left font-semibold">Estado</th>
-        <th class="py-3 px-4 border-b text-left font-semibold">Tareas Pendientes</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let proyecto of paginatedProyectos" class="hover:bg-gray-50 transition-all" (click)="openEditarProyectoDiv(proyecto)">
-        <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.id }}</td>
-        <td class="py-3 px-4 border-b text-gray-700 font-medium">{{ proyecto.nombre }}</td>
-        <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.clientes?.[0]?.nombre }}</td>
-        <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.fecha_inicio }}</td>
-        <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.fecha_fin }}</td>
-        <td class="py-3 px-4 border-b">
-          <div class="flex items-center">
-            <div class="relative w-full h-2 bg-gray-200 rounded-full">
-              <div class="absolute h-full bg-green-500 rounded-full" [style.width.%]="proyecto.progreso"></div>
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-lg">
+      <caption class="text-lg font-semibold mb-4 text-gray-800">Tabla de Gestión de Proyectos</caption>
+      <thead class="bg-blue-100 text-blue-800">
+        <tr>
+          <th class="py-3 px-4 border-b text-left font-semibold cursor-pointer" (click)="onSort('id')">
+            ID
+            <span *ngIf="sortColumn === 'id'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+          </th>
+          <th class="py-3 px-4 border-b text-left font-semibold cursor-pointer" (click)="onSort('nombre')">
+            Nombre del Proyecto
+            <span *ngIf="sortColumn === 'nombre'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+          </th>
+          <th class="py-3 px-4 border-b text-left font-semibold">Cliente</th>
+          <th class="py-3 px-4 border-b text-left font-semibold cursor-pointer" (click)="onSort('fecha_inicio')">
+            Fecha de Inicio
+            <span *ngIf="sortColumn === 'fecha_inicio'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+          </th>
+          <th class="py-3 px-4 border-b text-left font-semibold cursor-pointer" (click)="onSort('fecha_fin')">
+            Fecha de Fin
+            <span *ngIf="sortColumn === 'fecha_fin'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+          </th>
+          <th class="py-3 px-4 border-b text-left font-semibold cursor-pointer" (click)="onSort('progreso')">
+            Progreso
+            <span *ngIf="sortColumn === 'progreso'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+          </th>
+          <th class="py-3 px-4 border-b text-left font-semibold cursor-pointer" (click)="onSort('estado')">
+            Estado
+            <span *ngIf="sortColumn === 'estado'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+          </th>
+          <th class="py-3 px-4 border-b text-left font-semibold cursor-pointer" (click)="onSort('tareas_pendientes')">
+            Tareas Pendientes
+            <span *ngIf="sortColumn === 'tareas_pendientes'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+          </th>
+          <th class="py-3 px-4 border-b text-left font-semibold">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let proyecto of paginatedProyectos" class="hover:bg-gray-50 transition-all">
+          <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.id }}</td>
+          <td class="py-3 px-4 border-b text-gray-700 font-medium">{{ proyecto.nombre }}</td>
+          <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.clientes?.[0]?.nombre }}</td>
+          <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.fecha_inicio | date:'dd/MM/yyyy' }}</td>
+          <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.fecha_fin | date:'dd/MM/yyyy' }}</td>
+          <td class="py-3 px-4 border-b">
+            <div class="flex items-center">
+              <div class="relative w-full h-2 bg-gray-200 rounded-full">
+                <div class="absolute h-full bg-green-500 rounded-full" [style.width.%]="proyecto.progreso"></div>
+              </div>
+              <span class="ml-2 text-sm font-medium text-gray-700">{{ proyecto.progreso }}%</span>
             </div>
-            <span class="ml-2 text-sm font-medium text-gray-700">{{ proyecto.progreso }}%</span>
-          </div>
-        </td>
-        <td class="py-3 px-4 border-b">
-          <span class="px-2 py-1 rounded-full text-xs font-semibold"
-            [class.bg-blue-500]="proyecto.estado === 'En progreso'"
-            [class.text-white]="proyecto.estado === 'En progreso'"
-            [class.bg-gray-300]="proyecto.estado !== 'En progreso'"
-            [class.text-gray-800]="proyecto.estado !== 'En progreso'">
-            {{ proyecto.estado }}
-          </span>
-        </td>
-        <td class="py-3 px-4 border-b text-gray-700"></td>
-      </tr>
-    </tbody>
-  </table>
+          </td>
+          <td class="py-3 px-4 border-b">
+            <span class="px-2 py-1 rounded-full text-xs font-semibold"
+              [ngClass]="{
+                'bg-blue-500 text-white': proyecto.estado === 'En Progreso',
+                'bg-green-500 text-white': proyecto.estado === 'Completado',
+                'bg-yellow-500 text-white': proyecto.estado === 'Pendiente'
+              }">
+              {{ proyecto.estado }}
+            </span>
+          </td>
+          <td class="py-3 px-4 border-b text-gray-700">{{ proyecto.tareas_pendientes }}</td>
+          <td class="py-3 px-4 border-b text-gray-700">
+            <button (click)="openEditarProyectoDiv(proyecto)" class="text-blue-600 hover:text-blue-800 mr-2">Editar</button>
+            <button (click)="verDetallesProgreso(proyecto)" class="text-green-600 hover:text-green-800">Ver Progreso</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <!-- Controles de Paginación -->
   <div class="flex justify-end space-x-4 mt-4">
     <button (click)="previousPage()" [disabled]="currentPage === 1"
-      class="px-3 py-1 bg-gray-300 rounded-lg text-gray-700">Anterior</button>
+      class="px-3 py-1 bg-gray-300 rounded-lg text-gray-700 disabled:opacity-50">Anterior</button>
     <span>Página {{ currentPage }} de {{ totalPages }}</span>
     <button (click)="nextPage()" [disabled]="currentPage === totalPages"
-      class="px-3 py-1 bg-gray-300 rounded-lg text-gray-700">Siguiente</button>
+      class="px-3 py-1 bg-gray-300 rounded-lg text-gray-700 disabled:opacity-50">Siguiente</button>
   </div>
-
+</div>
 
 <app-nuevo-proyecto *ngIf="nuevoProyectoVisible" (ocultarDiv)="closeNuevoProyectoDiv()"></app-nuevo-proyecto>
 <app-editar-proyecto [proyecto]="proyectoEditar[0]" (ocultarDiv)="closeEditarProyectoDiv()" *ngIf="editarProyectoVisible"></app-editar-proyecto>

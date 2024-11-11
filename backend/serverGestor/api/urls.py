@@ -7,6 +7,9 @@ from .views import ClientesListCreateView, ClientesDetailView
 from .views import SubtareasListCreateView, SubtareasDetailView
 from .views import CargosListView, CargosDetailView, UsuariosListView, UsuariosDetailView
 from .views import ProyectosActivosCountView, DashboardDataView, AsignacionProyectosView
+from .views import tareas_pendientes_por_proyecto
+from . import views
+
 urlpatterns = [
     path('login/', login, name='login'),
    ## path('proyectos/',proyectos, name='proyecto'),
@@ -49,6 +52,9 @@ urlpatterns = [
 
     ##RUTA DE DASHBOARD
         path('dashboard-data/', DashboardDataView.as_view(), name='dashboard-data'),
+
+##TAREAS PENDIENTES POR PROYECTO
+    path('proyectos/tareas-pendientes/', views.tareas_pendientes_por_proyecto, name='tareas_pendientes_por_proyecto'),
 
 
 ]

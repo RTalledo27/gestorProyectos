@@ -96,9 +96,31 @@ class AsignacionProyectoSerializer(serializers.ModelSerializer):
 
 class TareasSerializer(serializers.ModelSerializer):
     class Meta:
+        proyecto = ProyectoSerializer(read_only=True)
+    proyecto_id = serializers.PrimaryKeyRelatedField(
+        queryset=Proyectos.objects.all(),
+        source='proyecto',
+        write_only=True
+    )
+
+    class Meta:
         model = Tarea
-        fields = ['id', 'titulo', 'descripcion', 'estado', 'prioridad', 'fecha_vencimiento', 'proyecto']
-        extra_kwargs = {'proyecto': {'required': True}}
+        fields = ['id', 'titulo', 'descripcion', 'estado', 'prioridad', 'fecha_vencimiento', 'proyecto', 'proyecto_id']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['proyecto'] = ProyectoSerializer(instance.proyecto).data
+        return representation
+
+    class Meta:
+        model = Tarea
+        fields = ['id', 'titulo', 'descripcion', 'estado', 'prioridad', 'fecha_vencimiento', 'proyecto', 'proyecto_id']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['proyecto'] = ProyectoSerializer(instance.proyecto).data
+        return representation
+
 
 class SubTareasSerializer(serializers.ModelSerializer):
     class Meta:

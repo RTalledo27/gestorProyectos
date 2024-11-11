@@ -174,7 +174,7 @@ class AsignacionProyecto(models.Model):
 class Tarea(models.Model):
     OPCIONES_ESTADO = [
         ('Pendiente', 'Pendiente'),
-        ('En Proceso', 'En Proceso'),
+        ('En Progreso', 'En Progreso'),
         ('Completada', 'Completada'),
         ('Retrasada', 'Retrasada'),
     ]

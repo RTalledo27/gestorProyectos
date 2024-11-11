@@ -14,5 +14,5 @@ export interface Usuarios {
     nombre: string;
     descripcion: string;
   };
-  proyectos_activos?: number;
+  proyectos_activos: number;
 }

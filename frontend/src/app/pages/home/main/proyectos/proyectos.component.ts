@@ -4,10 +4,11 @@ import { NuevoProyectoComponent } from "./nuevo-proyecto/nuevo-proyecto.componen
 import { EditarProyectoComponent } from "./editar-proyecto/editar-proyecto.component";
 import { Proyectos } from '../../../interfaces/proyectos';
 import { ProyectosService } from '../../../../services/main/proyectos.service';
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-proyectos',
   standalone: true,
-  imports: [CommonModule, NuevoProyectoComponent, EditarProyectoComponent],
+  imports: [CommonModule, FormsModule , NuevoProyectoComponent, EditarProyectoComponent],
   templateUrl: './proyectos.component.html',
   styleUrl: './proyectos.component.css'
 })
@@ -16,50 +17,81 @@ export class ProyectosComponent {
 
   nuevoProyectoVisible = false;
   editarProyectoVisible = false;
-  proyectoEditar: Proyectos[]=[];
-  proyectos: Proyectos[] = [
-
-  ];
+  proyectoEditar: Proyectos[] = [];
+  proyectos: Proyectos[] = [];
+  filteredProyectos: Proyectos[] = [];
 
   currentPage: number = 1;
   itemsPerPage: number = 5;
+  searchTerm: string = '';
+  sortColumn: keyof Proyectos = 'nombre';
+  sortDirection: 'asc' | 'desc' = 'asc';
+  estadoFilter: string = '';
 
-  constructor(private proyectosService: ProyectosService){
-
-  }
-
-
+  constructor(private proyectosService: ProyectosService) {}
 
   ngOnInit(): void {
-    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    //Add 'implements OnInit' to the class.
     this.cargarProyectos();
-    console.table(this.proyectos);
   }
 
-
-
-  //METODO CARGAR TODOS LOS PROYECTOS:
-  cargarProyectos(){
-    this.proyectosService.getProyectos().subscribe( {
+  cargarProyectos() {
+    this.proyectosService.getProyectos().subscribe({
       next: (data: Proyectos[]) => {
         this.proyectos = data;
+        this.applyFilters();
       },
       error: (error) => {
-        console.log(error);
+        console.error('Error al cargar proyectos:', error);
       }
     });
   }
 
+  applyFilters() {
+    this.filteredProyectos = this.proyectos.filter(proyecto =>
+      proyecto.nombre.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
+      (this.estadoFilter === '' || proyecto.estado === this.estadoFilter)
+    );
+    this.sortProyectos();
+  }
+
+  sortProyectos() {
+    this.filteredProyectos.sort((a, b) => {
+      const aValue = a[this.sortColumn] ?? '';
+      const bValue = b[this.sortColumn] ?? '';
+      if (aValue < bValue) return this.sortDirection === 'asc' ? -1 : 1;
+      if (aValue > bValue) return this.sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
+  onSort(column: keyof Proyectos) {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+    this.sortProyectos();
+  }
+
+  onSearch() {
+    this.currentPage = 1;
+    this.applyFilters();
+  }
+
+  onFilterChange() {
+    this.currentPage = 1;
+    this.applyFilters();
+  }
 
   get paginatedProyectos(): Proyectos[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     const end = start + this.itemsPerPage;
-    return this.proyectos.slice(start, end);
+    return this.filteredProyectos.slice(start, end);
   }
 
   get totalPages(): number {
-    return Math.ceil(this.proyectos.length / this.itemsPerPage);
+    return Math.ceil(this.filteredProyectos.length / this.itemsPerPage);
   }
 
   nextPage(): void {
@@ -74,29 +106,31 @@ export class ProyectosComponent {
     }
   }
 
- //METODO PARA OCULTAR Y MOSTRAR  DIV DE NUEVO PROYECTO
-  openNuevoProyectoDiv(){
-    this.nuevoProyectoVisible =true;
+  openNuevoProyectoDiv() {
+    this.nuevoProyectoVisible = true;
   }
 
-  closeNuevoProyectoDiv(){
+  closeNuevoProyectoDiv() {
     this.nuevoProyectoVisible = false;
+    this.cargarProyectos();
   }
 
-  openEditarProyectoDiv(proyecto: Proyectos){
-    if(proyecto){
-    this.proyectoEditar = [proyecto];
-    this.editarProyectoVisible = true;
-    }else{
+  openEditarProyectoDiv(proyecto: Proyectos) {
+    if (proyecto) {
+      this.proyectoEditar = [proyecto];
+      this.editarProyectoVisible = true;
+    } else {
       this.proyectoEditar = [];
     }
   }
 
-  closeEditarProyectoDiv(){
+  closeEditarProyectoDiv() {
     this.editarProyectoVisible = false;
+    this.cargarProyectos();
   }
 
-
-
+  verDetallesProgreso(proyecto: Proyectos) {
+    console.log('Ver detalles de progreso para:', proyecto.nombre);
+  }
 
 }

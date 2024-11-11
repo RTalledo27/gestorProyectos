@@ -14,69 +14,79 @@ import { ProyectosService } from '../../../../services/main/proyectos.service';
   styleUrl: './equipo.component.css'
 })
 export class EquipoComponent {
-  equipo: Usuarios[] = [];
-  mostrarModal = false;
-  miembroSeleccionado: any = null;
-  rolSeleccionado: string = '';
+  desarrolladores: Usuarios[] = [];
+  filteredDesarrolladores: Usuarios[] = [];
   searchTerm: string = '';
-  estadoFiltro: string = '';
-  proyectos: Proyectos[]=[];
+  sortColumn: keyof Usuarios = 'nombres';
+  sortDirection: 'asc' | 'desc' = 'asc';
+  especialidadFilter: string = '';
 
-  constructor(private equipoService: EquipoService, private proyectoService: ProyectosService) {}
+  constructor(private equipoService: EquipoService) {}
 
   ngOnInit(): void {
-    this.cargarEquipo();
-    this.cargarProyectos();
+    this.cargarDesarrolladores();
+    this.equipoService.equipoActualizado.subscribe(() => {
+      this.cargarDesarrolladores();
+    });
   }
 
-
-  cargarProyectos(){
-    this.proyectoService.getProyectos().subscribe({
-      next: (data: Proyectos[]) => {
-        this.proyectos = data;
+  cargarDesarrolladores(): void {
+    this.equipoService.getEquipoConProyectosActivos().subscribe({
+      next: (data: Usuarios[]) => {
+        this.desarrolladores = data.filter(usuario => usuario.cargo?.nombre.toLowerCase().includes('desarrollador'));
+        this.applyFilters();
       },
-      error: (error) => {
-        console.log(error);
+      error: (error) => console.error('Error al cargar desarrolladores:', error)
+    });
+  }
+
+  applyFilters(): void {
+    this.filteredDesarrolladores = this.desarrolladores.filter(dev =>
+      (dev.nombres.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+       dev.apellidos.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+       dev.email.toLowerCase().includes(this.searchTerm.toLowerCase())) &&
+      (this.especialidadFilter === '' || dev.cargo?.nombre === this.especialidadFilter)
+    );
+    this.sortDesarrolladores();
+  }
+
+  sortDesarrolladores(): void {
+    this.filteredDesarrolladores.sort((a, b) => {
+      const aValue = a[this.sortColumn] ?? '';
+      const bValue = b[this.sortColumn] ?? '';
+
+      if (typeof aValue === 'string' && typeof bValue === 'string'){
+        if (aValue.toLowerCase() < bValue.toLowerCase()) return this.sortDirection === 'asc' ? -1 : 1;
+        if (aValue.toLowerCase() > bValue.toLowerCase()) return this.sortDirection === 'asc' ? 1 : -1;
+      } else {
+        if (aValue < bValue) return this.sortDirection === 'asc' ? -1 : 1;
+        if (aValue > bValue) return this.sortDirection === 'asc' ? 1 : -1;
       }
+      return 0;
     });
   }
 
-    cargarEquipo() {
-      this.equipoService.getEquipoConProyectosActivos().subscribe({
-        next: (data: Usuarios[]) => {
-          this.equipo = data;
-        },
-        error: (error) => {
-          console.error('Error al cargar el equipo:', error);
-        }
-      });
-
-  }
-
-  abrirModalAsignacion(miembro: Usuarios) {
-    this.miembroSeleccionado = miembro;
-    this.mostrarModal = true;
-  }
-
-  cerrarModal() {
-    this.mostrarModal = false;
-    this.miembroSeleccionado = null;
-  }
-
-  asignarProyecto(proyecto: Proyectos) {
-    if (this.miembroSeleccionado) {
-      console.log(`Asignando ${proyecto.nombre} a ${this.miembroSeleccionado.nombres}`);
-      console.log(proyecto);
-      this.cerrarModal();
+  onSort(column: keyof Usuarios): void {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
     }
+    this.sortDesarrolladores();
   }
 
-  filtrarProyectos() {
-    return this.proyectos.filter(proyecto => {
-      const matchesSearch = proyecto.nombre.toLowerCase().includes(this.searchTerm.toLowerCase());
-      const matchesStatus = !this.estadoFiltro || proyecto.estado === this.estadoFiltro;
-      return matchesSearch && matchesStatus;
-    });
+  onSearch(): void {
+    this.applyFilters();
+  }
+
+  onFilterChange(): void {
+    this.applyFilters();
+  }
+
+  verPerfilDesarrollador(id: number): void {
+    // Implementar navegación al perfil del desarrollador
+    console.log(`Navegar al perfil del desarrollador con ID: ${id}`);
   }
 
   //OBTENER EERRORES

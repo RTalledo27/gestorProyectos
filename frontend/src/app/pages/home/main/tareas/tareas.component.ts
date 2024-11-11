@@ -1,73 +1,124 @@
 import { CommonModule } from '@angular/common';
-import { Component, SimpleChanges } from '@angular/core';
+import { Component, model, SimpleChanges } from '@angular/core';
 import { Tareas } from '../../../interfaces/tareas';
 import { TareasService } from '../../../../services/main/tareas.service';
 import { EditarTareaComponent } from "./editar-tarea/editar-tarea.component";
 import { NuevaSubtareaComponent } from "./nueva-subtarea/nueva-subtarea.component";
 import { NuevaTareaComponent } from './nueva-tarea/nueva-tarea.component';
+import { FormGroupDirective, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 
 @Component({
   selector: 'app-tareas',
   standalone: true,
-  imports: [CommonModule, EditarTareaComponent, NuevaSubtareaComponent,NuevaTareaComponent],
+  imports: [CommonModule, EditarTareaComponent, NuevaSubtareaComponent,NuevaTareaComponent,FormsModule ],
   templateUrl: './tareas.component.html',
   styleUrl: './tareas.component.css',
 })
 export class TareasComponent {
   tareas: Tareas[] = [];
-
-  tareaEditar: Tareas[]=[];
-  eliminarTareaVisible = false;
-  nuevaTareaVisible = false;
-  nuevaSubtareaVisible = false;
-  editarTareaVisible = false;
-  tareaSeleccionada: any;
+  filteredTareas: Tareas[] = [];
+  selectedProyecto: string = '';
+  searchTerm: string = '';
+  priorityFilter: string = '';
+  statusFilter: string = '';
 
   currentPage: number = 1;
-  itemsPerPage: number = 5; //  Numero de items por pag
+  itemsPerPage: number = 5;
 
+  nuevaTareaVisible = false;
+  editarTareaVisible = false;
+  nuevaSubtareaVisible = false;
+  eliminarTareaVisible = false;
+  tareaEditar: Tareas[] = [];
+  tareaSeleccionada: Tareas | null = null;
 
-  ngOnChanges(changes: SimpleChanges): void {
-    //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
-    //Add '${implements OnChanges}' to the class.
-    console.log('ngOnChanges');
-  }
-
-
-
-  constructor(private tareasService:TareasService) {}
-
-
+  constructor(private tareasService: TareasService) {}
 
   ngOnInit(): void {
-
     this.cargarTareas();
-    console.table(this.tareas);
   }
 
-  cargarTareas(){
+  cargarTareas() {
     this.tareasService.getTareas().subscribe({
       next: (data: Tareas[]) => {
         this.tareas = data;
+        this.applyFilters();
       },
       error: (error) => {
-        console.log(error);
+        console.error('Error loading tasks:', error);
       }
     });
   }
 
+  applyFilters() {
+    this.filteredTareas = this.tareas.filter(tarea =>
+      (!this.selectedProyecto || tarea.proyecto?.nombre === this.selectedProyecto) &&
+      (!this.searchTerm || tarea.titulo.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                           tarea.descripcion?.toLowerCase().includes(this.searchTerm.toLowerCase())) &&
+      (!this.priorityFilter || tarea.prioridad === this.priorityFilter) &&
+      (!this.statusFilter || tarea.estado === this.statusFilter)
+    );
+    this.currentPage = 1;
+  }
+
+  onSearchChange() {
+    this.applyFilters();
+  }
+
+  onPriorityFilterChange() {
+    this.applyFilters();
+  }
+
+  onStatusFilterChange() {
+    this.applyFilters();
+  }
+
+  onProyectoChange() {
+    this.applyFilters();
+  }
+
+  updateTaskPriority(task: Tareas, newPriority: string) {
+    this.tareasService.updateTaskPriority(task.id, newPriority).subscribe({
+      next: (updatedTask) => {
+        const index = this.tareas.findIndex(t => t.id === updatedTask.id);
+        if (index !== -1) {
+          this.tareas[index] = updatedTask;
+          this.applyFilters();
+        }
+      },
+      error: (error) => console.error('Error updating task priority:', error)
+    });
+  }
+
+  updateTaskStatus(task: Tareas, newStatus: string) {
+    this.tareasService.updateTaskStatus(task.id, newStatus).subscribe({
+      next: (updatedTask) => {
+        const index = this.tareas.findIndex(t => t.id === updatedTask.id);
+        if (index !== -1) {
+          this.tareas[index] = updatedTask;
+          this.applyFilters();
+        }
+      },
+      error: (error) => console.error('Error updating task status:', error)
+    });
+  }
 
   get paginatedTareas(): Tareas[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     const end = start + this.itemsPerPage;
-    return this.tareas.slice(start, end);
+    return this.filteredTareas.slice(start, end);
   }
 
   get totalPages(): number {
-    return Math.ceil(this.tareas.length / this.itemsPerPage);
+    return Math.ceil(this.filteredTareas.length / this.itemsPerPage);
   }
+
+  get uniqueProjectNames(): string[] {
+    return Array.from(new Set(this.tareas.map(t => t.proyecto?.nombre).filter((nombre): nombre is string => Boolean(nombre))));
+  }
+
 
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
@@ -81,73 +132,63 @@ export class TareasComponent {
     }
   }
 
-
-  ///METODO PARA OCULTAR DIV DE NUEVA TAREA
-  openNuevaTareaDiv(){
-    this.nuevaTareaVisible =true;
+  openNuevaTareaDiv() {
+    this.nuevaTareaVisible = true;
   }
 
-  closeNuevaTareaDiv(){
+  closeNuevaTareaDiv() {
     this.nuevaTareaVisible = false;
   }
 
-  ///METODO PARA OCULTAR DIV DE NUEVA SUBTAREA
-  openNuevaSubtareaDiv(event: Event,tarea: Tareas){
+  openNuevaSubtareaDiv(event: Event, tarea: Tareas) {
     event.stopPropagation();
-    this.nuevaSubtareaVisible =true;
-    if(tarea){
+    this.nuevaSubtareaVisible = true;
+    if (tarea) {
       this.tareaEditar = [tarea];
-      this.nuevaSubtareaVisible = true;
-      this.nuevaSubtareaVisible = true;
-    }else{
+    } else {
       this.tareaEditar = [];
     }
   }
 
-  closeNuevaSubtareaDiv(){
+  closeNuevaSubtareaDiv() {
     this.nuevaSubtareaVisible = false;
   }
 
-  ///METODO PARA OCULTAR DIV DE EDITAR TAREA
-  openEditarTareaDiv(tarea: Tareas){
-    if(tarea){
+  openEditarTareaDiv(tarea: Tareas) {
+    if (tarea) {
       this.tareaEditar = [tarea];
       this.editarTareaVisible = true;
-    }else{
+    } else {
       this.tareaEditar = [];
     }
   }
 
-  closeEditarTareaDiv(){
+  closeEditarTareaDiv() {
     this.editarTareaVisible = false;
   }
 
-  ///METODO PARA ELIMINAR TAREA
-  openEliminarTareaDiv(tarea: Tareas, event: Event){
+  openEliminarTareaDiv(tarea: Tareas, event: Event) {
     event.stopPropagation();
     this.tareaSeleccionada = tarea;
     this.eliminarTareaVisible = true;
   }
 
-  closeEliminarTareaDiv(){
+  closeEliminarTareaDiv() {
     this.eliminarTareaVisible = false;
   }
 
-
-  eliminarTarea(){{
-    this.tareasService.deletTarea(this.tareaSeleccionada).subscribe({
-      next: (data: Tareas) => {
-        this.eliminarTareaVisible = false;
-        this.cargarTareas();
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    });
+  eliminarTarea() {
+    if (this.tareaSeleccionada) {
+      this.tareasService.deletTarea(this.tareaSeleccionada.id).subscribe({
+        next: () => {
+          this.eliminarTareaVisible = false;
+          this.cargarTareas();
+        },
+        error: (error) => {
+          console.error('Error deleting task:', error);
+        }
+      });
     }
   }
-
-
-
 
 }

@@ -12,76 +12,44 @@ import { Tareas } from '../../../../interfaces/tareas';
   styleUrl: './nueva-subtarea.component.css'
 })
 export class NuevaSubtareaComponent {
+  @Input() tarea!: Tareas[];
   @Output() close = new EventEmitter<void>();
-  @Output() subtareaCreated = new EventEmitter<any>();
-  @Output() subtareaUpdated = new EventEmitter<any>();
+  @Output() subtareaCreada = new EventEmitter<Tareas>();
 
-  subtareaForm: FormGroup;
-  subtareas: any[] = [];
-  @Input() tarea: Tareas[] = [];
+  formNuevaSubtarea: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     private tareasService: TareasService
   ) {
-    this.subtareaForm = this.fb.group({
-      titulo: ['', Validators.required],
-      estado: [false]
-    });
-  }
-
-  ngOnInit() {
-    this.loadSubtareas();
-  }
-
-  loadSubtareas() {
-    this.tareasService.getSubtareasByTarea(this.tarea[0].id).subscribe({
-      next: (data) => {
-        this.subtareas = data;
-      },
-      error: (error) => {
-        console.error('Error loading subtareas:', error);
-      }
+    this.formNuevaSubtarea = this.fb.group({
+      titulo: ['', [Validators.required]],
+      descripcion: ['', [Validators.required]],
+      fecha_vencimiento: ['', [Validators.required]],
+      estado: ['Pendiente', [Validators.required]],
+      prioridad: ['Media', [Validators.required]]
     });
   }
 
   onSubmit() {
-
-
-  }
-
-  toggleSubtareaEstado(subtarea: any) {
-    const updatedSubtarea = {
-      ...subtarea,
-      estado: !subtarea.estado
-    };
-
-    this.tareasService.updateSubtarea(subtarea.id, updatedSubtarea).subscribe({
-      next: (updated) => {
-        const index = this.subtareas.findIndex(s => s.id === updated.id);
-        if (index !== -1) {
-          this.subtareas[index] = updated;
+    if (this.formNuevaSubtarea.valid && this.tarea.length > 0) {
+      const nuevaSubtarea = {
+        ...this.formNuevaSubtarea.value,
+        tarea_padre_id: this.tarea[0].id
+      };
+      this.tareasService.createTareas(nuevaSubtarea).subscribe({
+        next: (subtareaCreada) => {
+          this.subtareaCreada.emit(subtareaCreada);
+          this.close.emit();
+        },
+        error: (error) => {
+          console.error('Error creating subtask:', error);
         }
-        this.subtareaUpdated.emit(updated);
-      },
-      error: (error) => {
-        console.error('Error updating subtarea:', error);
-      }
-    });
+      });
+    }
   }
 
-  deleteSubtarea(subtarea: any) {
-    this.tareasService.deleteSubtarea(subtarea.id).subscribe({
-      next: () => {
-        this.subtareas = this.subtareas.filter(s => s.id !== subtarea.id);
-      },
-      error: (error) => {
-        console.error('Error deleting subtarea:', error);
-      }
-    });
-  }
-
-  onCancel() {
+  cerrarModal() {
     this.close.emit();
   }
 }
