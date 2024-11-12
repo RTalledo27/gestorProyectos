@@ -1,63 +1,74 @@
 <div class="p-6 bg-gray-50 rounded-lg shadow-lg">
   <div class="flex justify-between items-center mb-6">
-    <h1 class="text-3xl font-bold text-gray-800">Clientes</h1>
     <button (click)="openNuevoClienteDiv()"
       class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all">
       Nuevo Cliente
     </button>
   </div>
 
-  <div class="relative flex items-center mb-6">
-    <input type="text" placeholder="Buscar clientes..."
-      class="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full max-w-sm shadow-sm" />
-    <button
-      class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
-      <i class="fas fa-search"></i>
-    </button>
+  <div class="flex flex-wrap gap-4 mb-6">
+    <div class="relative w-full max-w-sm">
+      <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearch()" placeholder="Buscar clientes..."
+        class="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full shadow-sm" />
+      <button type="button"
+        class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+    <div>
+      <select [(ngModel)]="estadoFilter" (ngModelChange)="onFilterChange()"
+        class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+        <option value="">Todos los estados</option>
+        <option value="Activo">Activo</option>
+        <option value="Inactivo">Inactivo</option>
+      </select>
+    </div>
   </div>
 
-  <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-lg">
-    <caption class="text-lg font-semibold mb-4 text-gray-800">Tabla de Gestión de Clientes</caption>
-    <thead class="bg-blue-100 text-blue-800">
-      <tr>
-        <th class="py-3 px-4 border-b text-left font-semibold">ID</th>
-        <th class="py-3 px-4 border-b text-left font-semibold">Nombre</th>
-        <th class="py-3 px-4 border-b text-left font-semibold">Apellido</th>
-        <th class="py-3 px-4 border-b text-left font-semibold">Correo</th>
-        <th class="py-3 px-4 border-b text-left font-semibold">Teléfono</th>
-        <th class="py-3 px-4 border-b text-left font-semibold">Género</th>
-        <th class="py-3 px-4 border-b text-left font-semibold">Estado</th>
-        <th class="py-3 px-4 border-b text-left font-semibold">Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let cliente of paginatedClientes" class="hover:bg-gray-50 transition-all">
-        <td class="py-3 px-4 border-b text-gray-700">{{ cliente.id }}</td>
-        <td class="py-3 px-4 border-b text-gray-700 font-medium">{{ cliente.nombre }}</td>
-        <td class="py-3 px-4 border-b text-gray-700">{{ cliente.apellido }}</td>
-        <td class="py-3 px-4 border-b text-gray-700">{{ cliente.correo }}</td>
-        <td class="py-3 px-4 border-b text-gray-700">{{ cliente.telefono }}</td>
-        <td class="py-3 px-4 border-b text-gray-700">{{ cliente.genero }}</td>
-        <td class="py-3 px-4 border-b">
-          <span class="px-2 py-1 rounded-full text-xs font-semibold" [class.bg-green-500]="cliente.estado === 'Activo'"
-            [class.text-white]="cliente.estado === 'Activo'" [class.bg-red-500]="cliente.estado === 'Inactivo'"
-            [class.text-white]="cliente.estado === 'Inactivo'">
-            {{ cliente.estado }}
-          </span>
-        </td>
-        <td class="py-3 px-4 border-b flex space-x-2">
-          <button (click)="openEditarClienteDiv(cliente)"
-            class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-1 px-2 rounded">
-            Editar
-          </button>
-          <button (click)="eliminarCliente(cliente.id)"
-            class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded">
-            Eliminar
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+
+  <div class="overflow-x-auto bg-white rounded-lg shadow-md">
+    <table class="min-w-full bg-white rounded-lg">
+      <thead class="bg-blue-100 text-blue-800">
+        <tr>
+          <th class="py-3 px-4 border-b text-left font-semibold">ID</th>
+          <th class="py-3 px-4 border-b text-left font-semibold">Nombre</th>
+          <th class="py-3 px-4 border-b text-left font-semibold">Apellido</th>
+          <th class="py-3 px-4 border-b text-left font-semibold">Correo</th>
+          <th class="py-3 px-4 border-b text-left font-semibold">Teléfono</th>
+          <th class="py-3 px-4 border-b text-left font-semibold">Género</th>
+          <th class="py-3 px-4 border-b text-left font-semibold">Estado</th>
+          <th class="py-3 px-4 border-b text-left font-semibold">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cliente of paginatedClientes" class="hover:bg-gray-50 transition-all">
+          <td class="py-3 px-4 border-b text-gray-700">{{ cliente.id }}</td>
+          <td class="py-3 px-4 border-b text-gray-700 font-medium">{{ cliente.nombre }}</td>
+          <td class="py-3 px-4 border-b text-gray-700">{{ cliente.apellido }}</td>
+          <td class="py-3 px-4 border-b text-gray-700">{{ cliente.correo }}</td>
+          <td class="py-3 px-4 border-b text-gray-700">{{ cliente.telefono }}</td>
+          <td class="py-3 px-4 border-b text-gray-700">{{ cliente.genero }}</td>
+          <td class="py-3 px-4 border-b">
+            <span class="px-2 py-1 rounded-full text-xs font-semibold"
+              [class.bg-green-500]="cliente.estado === 'Activo'" [class.text-white]="cliente.estado === 'Activo'"
+              [class.bg-red-500]="cliente.estado === 'Inactivo'" [class.text-white]="cliente.estado === 'Inactivo'">
+              {{ cliente.estado }}
+            </span>
+          </td>
+          <td class="py-3 px-4 border-b flex space-x-2">
+            <button (click)="openEditarClienteDiv(cliente)"
+              class="flex items-center bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-1 px-2 rounded shadow-md transition-all">
+              <i class="fas fa-edit mr-1"></i>
+            </button>
+            <button (click)="openEliminarClienteConfirm(cliente)"
+              class="flex items-center bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded shadow-md transition-all">
+              <i class="fas fa-trash mr-1"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <!-- Controles de Paginación -->
   <div class="flex justify-end space-x-4 mt-4">
@@ -71,4 +82,26 @@
   <app-nuevo-cliente *ngIf="nuevoClienteVisible" (ocultarDiv)="closeNuevoClienteDiv()"></app-nuevo-cliente>
   <app-editar-cliente [cliente]="clienteEditar[0]" (ocultarDiv)="closeEditarClienteDiv()"
     *ngIf="editarClienteVisible"></app-editar-cliente>
+</div>
+
+<!-- Modal de Confirmación de Eliminación -->
+<div *ngIf="eliminarClienteVisible" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+  <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div class="mt-3 text-center">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">Confirmar Eliminación</h3>
+      <div class="mt-2 px-7 py-3">
+        <p class="text-sm text-gray-700">¿Está seguro de eliminar el cliente seleccionado?</p>
+      </div>
+      <div class="mt-5 flex justify-end space-x-3">
+        <button type="button" (click)="closeEliminarClienteConfirm()"
+          class="bg-gray-200 hover:bg-gray-300 text-black font-bold py-2 px-4 rounded">
+          Cancelar
+        </button>
+        <button type="button" (click)="confirmarEliminarCliente()"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

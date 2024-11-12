@@ -4,25 +4,29 @@ import { NuevoClienteComponent } from './nuevo-cliente/nuevo-cliente.component';
 import { EditarClienteComponent } from './editar-cliente/editar-cliente.component';
 import { Clientes } from '../../../interfaces/clientes';
 import { ClientesService } from '../../../../services/main/clientes.service';
-
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-clientes',
   standalone: true,
-  imports: [CommonModule, NuevoClienteComponent, EditarClienteComponent],
+  imports: [CommonModule, FormsModule, NuevoClienteComponent, EditarClienteComponent],
   templateUrl: './clientes.component.html',
-  styleUrls: ['./clientes.component.css']
+  styleUrls: ['./clientes.component.css'],
 })
 export class ClientesComponent {
-
   nuevoClienteVisible = false;
   editarClienteVisible = false;
+  eliminarClienteVisible = false;
   clienteEditar: Clientes[] = [];
   clientes: Clientes[] = [];
+  filteredClientes: Clientes[] = [];
+  clienteAEliminar: Clientes | null = null;
 
   currentPage: number = 1;
   itemsPerPage: number = 5;
+  searchTerm: string = '';
+  estadoFilter: string = '';
 
-  constructor(private clientesService: ClientesService) { }
+  constructor(private clientesService: ClientesService) {}
 
   ngOnInit(): void {
     this.cargarClientes();
@@ -32,21 +36,39 @@ export class ClientesComponent {
     this.clientesService.getClientes().subscribe({
       next: (data: Clientes[]) => {
         this.clientes = data;
+        this.applyFilters();
       },
       error: (error) => {
-        console.log(error);
-      }
+        console.error('Error al cargar clientes:', error);
+      },
     });
+  }
+
+  applyFilters() {
+    this.filteredClientes = this.clientes.filter(cliente =>
+      cliente.nombre.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
+      (this.estadoFilter === '' || cliente.estado === this.estadoFilter)
+    );
+  }
+
+  onSearch() {
+    this.currentPage = 1;
+    this.applyFilters();
+  }
+
+  onFilterChange() {
+    this.currentPage = 1;
+    this.applyFilters();
   }
 
   get paginatedClientes(): Clientes[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     const end = start + this.itemsPerPage;
-    return this.clientes.slice(start, end);
+    return this.filteredClientes.slice(start, end);
   }
 
   get totalPages(): number {
-    return Math.ceil(this.clientes.length / this.itemsPerPage);
+    return Math.ceil(this.filteredClientes.length / this.itemsPerPage);
   }
 
   nextPage(): void {
@@ -67,7 +89,7 @@ export class ClientesComponent {
 
   closeNuevoClienteDiv() {
     this.nuevoClienteVisible = false;
-    this.cargarClientes(); 
+    this.cargarClientes();
   }
 
   openEditarClienteDiv(cliente: Clientes) {
@@ -81,24 +103,30 @@ export class ClientesComponent {
 
   closeEditarClienteDiv() {
     this.editarClienteVisible = false;
-    this.cargarClientes(); 
+    this.cargarClientes();
   }
 
-  eliminarCliente(clienteId: number | undefined) {
-    if (clienteId === undefined) {
-      console.error('El ID del cliente es undefined');
-      return;
-    }
+  openEliminarClienteConfirm(cliente: Clientes) {
+    this.clienteAEliminar = cliente;
+    this.eliminarClienteVisible = true;
+  }
 
-    if (confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
-      this.clientesService.deleteCliente(clienteId).subscribe({
+  closeEliminarClienteConfirm() {
+    this.eliminarClienteVisible = false;
+    this.clienteAEliminar = null;
+  }
+
+  confirmarEliminarCliente() {
+    if (this.clienteAEliminar && this.clienteAEliminar.id !== undefined) {
+      this.clientesService.deleteCliente(this.clienteAEliminar.id).subscribe({
         next: () => {
           console.log('Cliente eliminado');
-          this.cargarClientes(); 
+          this.cargarClientes();
+          this.closeEliminarClienteConfirm();
         },
         error: (error) => {
           console.error('Error al eliminar el cliente:', error);
-        }
+        },
       });
     }
   }
