@@ -1,20 +1,31 @@
 <div class="p-8 bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen">
-  <h1 class="text-4xl font-extrabold mb-8 text-gray-800">Servicios</h1>
 
   <div class="flex justify-between mb-6">
     <button (click)="openNuevoServicioDiv()"
       class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all">
       Nuevo Servicio
     </button>
-    <div class="relative">
-      <input type="text" placeholder="Buscar servicios..."
-        class="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full max-w-xs shadow-sm" />
-      <button
-        class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
-        <i class="fas fa-search"></i>
-      </button>
+    
+    <div class="flex space-x-4 items-center">
+      <div class="relative w-full max-w-xs">
+        <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearch()" placeholder="Buscar servicios..."
+          class="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full shadow-sm" />
+        <button type="button"
+          class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+  
+      <select [(ngModel)]="estadoFilter" (ngModelChange)="onFilterChange()"
+        class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+        <option value="">Todos los estados</option>
+        <option value="Activo">Activo</option>
+        <option value="Inactivo">Inactivo</option>
+      </select>
     </div>
   </div>
+  
+
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     <div *ngFor="let servicio of paginatedServicios"

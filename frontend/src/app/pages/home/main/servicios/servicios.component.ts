@@ -4,11 +4,11 @@ import { NuevoServicioComponent } from './nuevo-servicio/nuevo-servicio.componen
 import { EditarServicioComponent } from './editar-servicio/editar-servicio.component';
 import { Servicios } from '../../../interfaces/servicios';
 import { ServiciosService } from '../../../../services/main/servicios.service';
-
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-servicios',
   standalone: true,
-  imports: [CommonModule, NuevoServicioComponent, EditarServicioComponent],
+  imports: [CommonModule,FormsModule, NuevoServicioComponent, EditarServicioComponent],
   templateUrl: './servicios.component.html',
   styleUrls: ['./servicios.component.css']
 })
@@ -19,10 +19,13 @@ export class ServiciosComponent {
   eliminarServicioVisible = false; 
   servicioEditar: Servicios[] = [];
   servicios: Servicios[] = [];
+  filteredServicios: Servicios[] = [];
   servicioAEliminar: Servicios | null = null; 
 
   currentPage: number = 1;
   itemsPerPage: number = 5;
+  searchTerm: string = '';
+  estadoFilter: string = '';
 
   constructor(private serviciosService: ServiciosService) { }
 
@@ -34,21 +37,39 @@ export class ServiciosComponent {
     this.serviciosService.getServicios().subscribe({
       next: (data: Servicios[]) => {
         this.servicios = data;
+        this.applyFilters();
       },
       error: (error) => {
-        console.log(error);
+        console.error('Error al cargar servicios:', error);
       }
     });
+  }
+
+  applyFilters() {
+    this.filteredServicios = this.servicios.filter(servicio =>
+      servicio.nombre.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
+      (this.estadoFilter === '' || servicio.estado === this.estadoFilter)
+    );
+  }
+
+  onSearch() {
+    this.currentPage = 1;
+    this.applyFilters();
+  }
+
+  onFilterChange() {
+    this.currentPage = 1;
+    this.applyFilters();
   }
 
   get paginatedServicios(): Servicios[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     const end = start + this.itemsPerPage;
-    return this.servicios.slice(start, end);
+    return this.filteredServicios.slice(start, end);
   }
 
   get totalPages(): number {
-    return Math.ceil(this.servicios.length / this.itemsPerPage);
+    return Math.ceil(this.filteredServicios.length / this.itemsPerPage);
   }
 
   nextPage(): void {
