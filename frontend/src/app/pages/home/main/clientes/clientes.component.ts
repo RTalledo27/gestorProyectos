@@ -15,10 +15,10 @@ import { ClientesService } from '../../../../services/main/clientes.service';
 export class ClientesComponent {
   nuevoClienteVisible = false;
   editarClienteVisible = false;
-  eliminarClienteVisible = false; // Nueva variable para el modal de eliminación
+  eliminarClienteVisible = false; 
   clienteEditar: Clientes[] = [];
   clientes: Clientes[] = [];
-  clienteAEliminar: Clientes | null = null; // Variable para almacenar el cliente a eliminar
+  clienteAEliminar: Clientes | null = null; 
 
   currentPage: number = 1;
   itemsPerPage: number = 5;
