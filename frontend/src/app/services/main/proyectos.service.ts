@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Proyectos } from '../../pages/interfaces/proyectos';
@@ -76,15 +76,17 @@ export class ProyectosService {
     return this.http.post<Proyectos>(this.url,proyecto,{headers: headers});
   }
 
-  editProyecto(proyecto:Proyectos, proyectoData: Proyectos): Observable<Proyectos>{
+  editProyecto(proyecto: Proyectos): Observable<Proyectos> {
     const token = this.authService.getToken();
     if (!token) {
       this.router.navigate(['/auth/login']);
+      return new Observable(); // Return empty observable if no token
     }
-    const headers = {
-      'Authorization': `Token ${token}`
-    };
-    return this.http.put<Proyectos>(`${this.url}${proyecto.id}/`,proyectoData,{headers: headers});
+    const headers = new HttpHeaders({
+      'Authorization': `Token ${token}`,
+      'Content-Type': 'application/json'
+    });
+    return this.http.put<Proyectos>(`${this.url}${proyecto.id}/`, proyecto, { headers });
   }
 
 

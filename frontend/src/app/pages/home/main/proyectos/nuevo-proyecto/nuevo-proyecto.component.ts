@@ -29,9 +29,9 @@ servicios: Servicios[] = [];
 
   constructor(private fb: FormBuilder, private proyectosService: ProyectosService, private clientesService: ClientesService, private serviciosService: ServiciosService) {
     this.nuevoProyectoForm = this.fb.group({
-      nombre: ['', [Validators.required]],
-      descripcion: ['', [Validators.required]],
-      fecha_inicio: ['', [Validators.required]],
+      nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50), Validators.pattern('^[a-zA-Z0-9\\s]+$')]],
+      descripcion: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(200)]],
+      fecha_inicio: ['', [Validators.required, ]],
       fecha_fin: ['', [Validators.required]],
       estado: ['En Progreso', [Validators.required]],
       progreso: [0, [Validators.required, Validators.min(0), Validators.max(100)]],

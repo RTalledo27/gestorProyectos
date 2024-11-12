@@ -9,28 +9,58 @@
               <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre del Proyecto</label>
               <input id="nombre" formControlName="nombre" required
                      class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-            </div>
+                     <div *ngIf="hasError('nombre', 'required') && (nuevoProyectoForm.get('nombre')?.dirty || nuevoProyectoForm.get('nombre')?.touched)" class="error">
+                      El nombre del proyecto es requerido.
+                    </div>
+                    <div *ngIf="hasError('nombre', 'minlength') && (nuevoProyectoForm.get('nombre')?.dirty || nuevoProyectoForm.get('nombre')?.touched)" class="error">
+                      El nombre debe tener al menos 3 caracteres.
+                    </div>
+                    <div *ngIf="hasError('nombre', 'maxlength') && (nuevoProyectoForm.get('nombre')?.dirty || nuevoProyectoForm.get('nombre')?.touched)" class="error">
+                      El nombre no puede tener más de 50 caracteres.
+                    </div>
+                    <div *ngIf="hasError('nombre', 'pattern') && (nuevoProyectoForm.get('nombre')?.dirty || nuevoProyectoForm.get('nombre')?.touched)" class="error">
+                      El nombre solo puede contener letras, números y espacios.
+                    </div>
+                    </div>
             <div>
               <label for="fecha_inicio" class="block text-sm font-medium text-gray-700">Fecha de Inicio</label>
               <input id="fecha_inicio" formControlName="fecha_inicio" type="date" required
                      class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            </div>
+                     <div *ngIf="hasError('fecha_inicio', 'required') && (nuevoProyectoForm.get('fecha_inicio')?.dirty || nuevoProyectoForm.get('fecha_inicio')?.touched)" class="error">
+                      La fecha de inicio es requerida.
+                    </div>
+                    </div>
             <div>
               <label for="fecha_fin" class="block text-sm font-medium text-gray-700">Fecha de Fin</label>
               <input id="fecha_fin" formControlName="fecha_fin" type="date" required
                      class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            </div>
+                     <div *ngIf="hasError('fecha_fin', 'required') && (nuevoProyectoForm.get('fecha_fin')?.dirty || nuevoProyectoForm.get('fecha_fin')?.touched)" class="error">
+                      La fecha de fin es requerida.
+                    </div>
+                    </div>
             <div class="col-span-3">
               <label for="descripcion" class="block text-sm font-medium text-gray-700">Descripción</label>
               <textarea id="descripcion" formControlName="descripcion" required
                         class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
-            </div>
+                        <div *ngIf="hasError('descripcion', 'required') && (nuevoProyectoForm.get('descripcion')?.dirty || nuevoProyectoForm.get('descripcion')?.touched)" class="error">
+                          La descripción del proyecto es requerida.
+                        </div>
+                        <div *ngIf="hasError('descripcion', 'minlength') && (nuevoProyectoForm.get('descripcion')?.dirty || nuevoProyectoForm.get('descripcion')?.touched)" class="error">
+                          La descripción debe tener al menos 10 caracteres.
+                        </div>
+                        <div *ngIf="hasError('descripcion', 'maxlength') && (nuevoProyectoForm.get('descripcion')?.dirty || nuevoProyectoForm.get('descripcion')?.touched)" class="error">
+                          La descripción no puede tener más de 200 caracteres.
+                        </div>
+                      </div>
             <div>
               <label for="servicios" class="block text-sm font-medium text-gray-700">Servicios</label>
               <select id="servicios" formControlName="servicios" multiple
                       class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                 <option *ngFor="let servicio of servicios" [value]="servicio.id">{{ servicio.nombre }}</option>
               </select>
+              <div *ngIf="hasError('servicios', 'required') && (nuevoProyectoForm.get('servicios')?.dirty || nuevoProyectoForm.get('servicios')?.touched)" class="error">
+                Se requiere al menos un servicio.
+              </div>
             </div>
             <div>
               <label for="clientes" class="block text-sm font-medium text-gray-700">Clientes</label>
@@ -38,6 +68,9 @@
                       class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                 <option *ngFor="let cliente of clientes" [value]="cliente.id">{{ cliente.nombre }} {{ cliente.apellido }}</option>
               </select>
+              <div *ngIf="hasError('clientes', 'required') && (nuevoProyectoForm.get('clientes')?.dirty || nuevoProyectoForm.get('clientes')?.touched)" class="error">
+                Se requiere al menos un cliente.
+              </div>
             </div>
             <div>
               <label for="estado" class="block text-sm font-medium text-gray-700">Estado</label>
@@ -48,6 +81,9 @@
                 <option value="Pendiente">Pendiente</option>
                 <option value="Cancelado">Cancelado</option>
               </select>
+              <div *ngIf="hasError('estado', 'required') && (nuevoProyectoForm.get('estado')?.dirty || nuevoProyectoForm.get('estado')?.touched)" class="error">
+                El estado del proyecto es requerido.
+              </div>
             </div>
           </div>
           <div class="flex justify-end space-x-3">
