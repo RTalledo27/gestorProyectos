@@ -16,8 +16,10 @@ export class ServiciosComponent {
 
   nuevoServicioVisible = false;
   editarServicioVisible = false;
+  eliminarServicioVisible = false; 
   servicioEditar: Servicios[] = [];
   servicios: Servicios[] = [];
+  servicioAEliminar: Servicios | null = null; 
 
   currentPage: number = 1;
   itemsPerPage: number = 5;
@@ -84,17 +86,23 @@ export class ServiciosComponent {
     this.cargarServicios();
   }
 
-  eliminarServicio(servicioId: number | undefined) {
-    if (servicioId === undefined) {
-      console.error('El ID del servicio es undefined');
-      return;
-    }
+  openEliminarServicioConfirm(servicio: Servicios) {
+    this.servicioAEliminar = servicio;
+    this.eliminarServicioVisible = true;
+  }
 
-    if (confirm('¿Estás seguro de que deseas eliminar este servicio?')) {
-      this.serviciosService.deleteServicio(servicioId).subscribe({
+  closeEliminarServicioConfirm() {
+    this.eliminarServicioVisible = false;
+    this.servicioAEliminar = null;
+  }
+
+  confirmarEliminarServicio() {
+    if (this.servicioAEliminar && this.servicioAEliminar.id !== undefined) {
+      this.serviciosService.deleteServicio(this.servicioAEliminar.id).subscribe({
         next: () => {
           console.log('Servicio eliminado');
           this.cargarServicios();
+          this.closeEliminarServicioConfirm(); 
         },
         error: (error) => {
           console.error('Error al eliminar el servicio:', error);

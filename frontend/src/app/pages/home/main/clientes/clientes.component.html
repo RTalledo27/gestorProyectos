@@ -50,7 +50,7 @@
             class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-1 px-2 rounded">
             Editar
           </button>
-          <button (click)="eliminarCliente(cliente.id)"
+          <button (click)="openEliminarClienteConfirm(cliente)"
             class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded">
             Eliminar
           </button>
@@ -71,4 +71,24 @@
   <app-nuevo-cliente *ngIf="nuevoClienteVisible" (ocultarDiv)="closeNuevoClienteDiv()"></app-nuevo-cliente>
   <app-editar-cliente [cliente]="clienteEditar[0]" (ocultarDiv)="closeEditarClienteDiv()"
     *ngIf="editarClienteVisible"></app-editar-cliente>
+</div>
+
+<!-- Modal de Confirmación de Eliminación -->
+<div *ngIf="eliminarClienteVisible" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+  <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div class="mt-3 text-center">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">Confirmar Eliminación</h3>
+      <div class="mt-2 px-7 py-3">
+        <p class="text-sm text-gray-700">¿Está seguro de eliminar el cliente seleccionado?</p>
+      </div>
+      <div class="mt-5 flex justify-end space-x-3">
+        <button type="button" (click)="closeEliminarClienteConfirm()" class="bg-gray-200 hover:bg-gray-300 text-black font-bold py-2 px-4 rounded">
+          Cancelar
+        </button>
+        <button type="button" (click)="confirmarEliminarCliente()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

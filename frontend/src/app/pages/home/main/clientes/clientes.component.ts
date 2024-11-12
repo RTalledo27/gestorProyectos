@@ -10,19 +10,20 @@ import { ClientesService } from '../../../../services/main/clientes.service';
   standalone: true,
   imports: [CommonModule, NuevoClienteComponent, EditarClienteComponent],
   templateUrl: './clientes.component.html',
-  styleUrls: ['./clientes.component.css']
+  styleUrls: ['./clientes.component.css'],
 })
 export class ClientesComponent {
-
   nuevoClienteVisible = false;
   editarClienteVisible = false;
+  eliminarClienteVisible = false; // Nueva variable para el modal de eliminación
   clienteEditar: Clientes[] = [];
   clientes: Clientes[] = [];
+  clienteAEliminar: Clientes | null = null; // Variable para almacenar el cliente a eliminar
 
   currentPage: number = 1;
   itemsPerPage: number = 5;
 
-  constructor(private clientesService: ClientesService) { }
+  constructor(private clientesService: ClientesService) {}
 
   ngOnInit(): void {
     this.cargarClientes();
@@ -35,7 +36,7 @@ export class ClientesComponent {
       },
       error: (error) => {
         console.log(error);
-      }
+      },
     });
   }
 
@@ -67,7 +68,7 @@ export class ClientesComponent {
 
   closeNuevoClienteDiv() {
     this.nuevoClienteVisible = false;
-    this.cargarClientes(); 
+    this.cargarClientes();
   }
 
   openEditarClienteDiv(cliente: Clientes) {
@@ -81,24 +82,30 @@ export class ClientesComponent {
 
   closeEditarClienteDiv() {
     this.editarClienteVisible = false;
-    this.cargarClientes(); 
+    this.cargarClientes();
   }
 
-  eliminarCliente(clienteId: number | undefined) {
-    if (clienteId === undefined) {
-      console.error('El ID del cliente es undefined');
-      return;
-    }
+  openEliminarClienteConfirm(cliente: Clientes) {
+    this.clienteAEliminar = cliente;
+    this.eliminarClienteVisible = true;
+  }
 
-    if (confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
-      this.clientesService.deleteCliente(clienteId).subscribe({
+  closeEliminarClienteConfirm() {
+    this.eliminarClienteVisible = false;
+    this.clienteAEliminar = null;
+  }
+
+  confirmarEliminarCliente() {
+    if (this.clienteAEliminar && this.clienteAEliminar.id !== undefined) {
+      this.clientesService.deleteCliente(this.clienteAEliminar.id).subscribe({
         next: () => {
           console.log('Cliente eliminado');
-          this.cargarClientes(); 
+          this.cargarClientes();
+          this.closeEliminarClienteConfirm();
         },
         error: (error) => {
           console.error('Error al eliminar el cliente:', error);
-        }
+        },
       });
     }
   }
