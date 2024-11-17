@@ -18,7 +18,7 @@ export class HomeComponent {
     this.router.events.subscribe(event=>{
       if(event instanceof NavigationEnd){
        switch(event.url){
-        case '/':
+        case '/dashboard':
           this.title = 'Dashboard';
           break;
         case '/proyectos':

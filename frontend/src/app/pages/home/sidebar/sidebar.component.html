@@ -10,33 +10,44 @@
 
   <!-- Navegación -->
   <nav class="mt-4">
-    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink=""
+    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/dashboard"
       routerLinkActive="active">
       <i class="fas fa-tachometer-alt"></i>
       <span *ngIf="isExpanded" class="ml-4">Dashboard</span>
     </a>
-    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/proyectos">
+
+    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/proyectos"
+      routerLinkActive="active">
       <i class="fas fa-briefcase"></i>
       <span *ngIf="isExpanded" class="ml-4">Proyectos</span>
     </a>
-    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/tareas">
+
+    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/tareas"
+      routerLinkActive="active">
       <i class="fas fa-tasks"></i>
       <span *ngIf="isExpanded" class="ml-4">Tareas</span>
     </a>
-    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/equipo">
+
+    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/equipo"
+      routerLinkActive="active">
       <i class="fas fa-users"></i>
-      <span *ngIf="isExpanded" class="ml-4 text-white">Equipo</span>
+      <span *ngIf="isExpanded" class="ml-4">Equipo</span>
     </a>
 
-    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/clientes">
+    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/clientes"
+      routerLinkActive="active">
       <i class="fas fa-users"></i>
       <span *ngIf="isExpanded" class="ml-4">Clientes</span>
     </a>
-    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="servicios">
+
+    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/servicios"
+      routerLinkActive="active">
       <i class="fas fa-concierge-bell"></i>
       <span *ngIf="isExpanded" class="ml-4">Servicios</span>
     </a>
-    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/reportes">
+
+    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/reportes"
+      routerLinkActive="active">
       <i class="fas fa-chart-pie"></i>
       <span *ngIf="isExpanded" class="ml-4">Reportes</span>
     </a>
