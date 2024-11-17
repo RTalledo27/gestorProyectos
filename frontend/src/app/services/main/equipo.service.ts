@@ -56,6 +56,26 @@ export class EquipoService {
     return this.http.post<Usuarios>(`${this.apiUrl}/proyectos/${proyecto_id}/asignar/`, { usuario_id: usuario_id, rol: rol }, { headers: headers });
   }
 
+  getMiembrosEquipo(proyectoId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/proyectos/${proyectoId}/equipo`, { headers: this.getHeaders() });
+  }
+
+  getDesarrolladoresDisponibles(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/desarrolladores-disponibles`, { headers: this.getHeaders() });
+  }
+
+  asignarDesarrollador(proyectoId: number, desarrolladorId: number, rol: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/proyectos/${proyectoId}/asignar`, { desarrolladorId, rol }, { headers: this.getHeaders() });
+  }
+
+  cambiarRol(proyectoId: number, miembroId: number, nuevoRol: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/proyectos/${proyectoId}/miembros/${miembroId}`, { rol: nuevoRol }, { headers: this.getHeaders() });
+  }
+
+  removerMiembro(proyectoId: number, miembroId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/proyectos/${proyectoId}/miembros/${miembroId}`, { headers: this.getHeaders() });
+  }
+
   notificarEquipoActualizado(): void {
     this.equipoActualizadoSource.next();
   }

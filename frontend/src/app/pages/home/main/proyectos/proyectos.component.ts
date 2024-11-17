@@ -5,16 +5,16 @@ import { EditarProyectoComponent } from "./editar-proyecto/editar-proyecto.compo
 import { Proyectos } from '../../../interfaces/proyectos';
 import { ProyectosService } from '../../../../services/main/proyectos.service';
 import { FormsModule } from '@angular/forms';
+import { GestionarEquipoComponent } from "./gestionar-equipo/gestionar-equipo.component";
 @Component({
   selector: 'app-proyectos',
   standalone: true,
-  imports: [CommonModule, FormsModule , NuevoProyectoComponent, EditarProyectoComponent],
+  imports: [CommonModule, FormsModule, NuevoProyectoComponent, EditarProyectoComponent, GestionarEquipoComponent],
   templateUrl: './proyectos.component.html',
   styleUrl: './proyectos.component.css'
 })
 
 export class ProyectosComponent {
-
   nuevoProyectoVisible = false;
   editarProyectoVisible = false;
   proyectoEditar: Proyectos[] = [];
@@ -27,6 +27,9 @@ export class ProyectosComponent {
   sortColumn: keyof Proyectos = 'nombre';
   sortDirection: 'asc' | 'desc' = 'asc';
   estadoFilter: string = '';
+
+  gestionarEquipoVisible = false;
+  proyectoSeleccionado: Proyectos | null = null;
 
   constructor(private proyectosService: ProyectosService) {}
 
@@ -131,6 +134,30 @@ export class ProyectosComponent {
 
   verDetallesProgreso(proyecto: Proyectos) {
     console.log('Ver detalles de progreso para:', proyecto.nombre);
+  }
+
+  deleteProyecto(proyecto: Proyectos) {
+    if (confirm(`¿Estás seguro de que quieres eliminar el proyecto "${proyecto.nombre}"?`)) {
+      this.proyectosService.deleteProyecto(proyecto.id || 0).subscribe({
+        next: () => {
+          this.cargarProyectos();
+        },
+        error: (error) => {
+          console.error('Error al eliminar el proyecto:', error);
+        }
+      });
+    }
+  }
+
+  gestionarEquipo(proyecto: Proyectos) {
+    this.proyectoSeleccionado = proyecto;
+    this.gestionarEquipoVisible = true;
+  }
+
+  closeGestionarEquipoDiv() {
+    this.gestionarEquipoVisible = false;
+    this.proyectoSeleccionado = null;
+    this.cargarProyectos();
   }
 
 }

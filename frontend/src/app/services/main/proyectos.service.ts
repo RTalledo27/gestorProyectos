@@ -90,6 +90,19 @@ export class ProyectosService {
   }
 
 
+  deleteProyecto(id: number): Observable<any> {
+    const token = this.authService.getToken();
+    if (!token) {
+      this.router.navigate(['/auth/login']);
+      return new Observable(); // Return empty observable if no token
+    }
+    const headers = new HttpHeaders({
+      'Authorization': `Token ${token}`,
+      'Content-Type': 'application/json'
+    });
+    return this.http.delete(`${this.url}${id}/`, { headers });
+  }
+
 
 
 }

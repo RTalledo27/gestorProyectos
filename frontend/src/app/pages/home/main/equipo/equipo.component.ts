@@ -5,11 +5,12 @@ import { Usuarios } from '../../../interfaces/usuarios';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Proyectos } from '../../../interfaces/proyectos';
 import { ProyectosService } from '../../../../services/main/proyectos.service';
+import { PerfilComponent } from "./perfil/perfil.component";
 
 @Component({
   selector: 'app-equipo',
   standalone: true,
-  imports: [NgFor, CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [NgFor, CommonModule, ReactiveFormsModule, FormsModule, PerfilComponent],
   templateUrl: './equipo.component.html',
   styleUrl: './equipo.component.css'
 })
