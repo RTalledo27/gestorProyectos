@@ -52,10 +52,16 @@
           </tr>
         </tbody>
       </table>
-      <button (click)="cerrarModal('proyectos')"
-        class="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full">
-        Cerrar
-      </button>
+      <div class="flex gap-4">
+        <button (click)="descargarReporte(reportes[0])"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">
+          Descargar
+        </button>
+        <button (click)="cerrarModal('proyectos')"
+          class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full">
+          Cerrar
+        </button>
+      </div>
     </div>
   </div>
 
@@ -87,10 +93,16 @@
           </tr>
         </tbody>
       </table>
-      <button (click)="cerrarModal('tareas')"
-        class="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full">
-        Cerrar
-      </button>
+      <div class="flex gap-4">
+        <button (click)="descargarReporte(reportes[2])"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">
+          Descargar
+        </button>
+        <button (click)="cerrarModal('tareas')"
+          class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full">
+          Cerrar
+        </button>
+      </div>
     </div>
   </div>
 </div>
