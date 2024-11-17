@@ -1,36 +1,55 @@
-<aside class="w-64 h-full bg-gray-800 text-white">
-  <div class="flex items-center justify-center h-16 border-b border-gray-700">
-    <h2 class="text-xl font-semibold">GS PROYECTOS</h2>
+<div [class.w-64]="isExpanded" [class.w-16]="!isExpanded"
+  class="h-full bg-gray-800 text-white transition-all duration-300 flex flex-col">
+  <!-- Header del Sidebar -->
+  <div class="flex items-center justify-between h-16 px-4 border-b border-gray-700">
+    <h2 *ngIf="isExpanded" class="text-xl font-semibold">GS PROYECTOS</h2>
+    <button (click)="toggleSidebar()" class="focus:outline-none text-gray-300">
+      <i [class]="isExpanded ? 'fas fa-chevron-left' : 'fas fa-chevron-right'"></i>
+    </button>
   </div>
-  <nav class="mt-6">
-    <a class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink=""
+
+  <!-- Navegación -->
+  <nav class="mt-4">
+    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/dashboard"
       routerLinkActive="active">
-      <i class="fas fa-tachometer-alt mr-3"></i>
-      Dashboard
+      <i class="fas fa-tachometer-alt"></i>
+      <span *ngIf="isExpanded" class="ml-4">Dashboard</span>
     </a>
-    <a class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/proyectos">
-      <i class="fas fa-briefcase mr-3"></i>
-      Proyectos
+
+    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/proyectos"
+      routerLinkActive="active">
+      <i class="fas fa-briefcase"></i>
+      <span *ngIf="isExpanded" class="ml-4">Proyectos</span>
     </a>
-    <a class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/tareas">
-      <i class="fas fa-tasks mr-3"></i>
-      Tareas
+
+    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/tareas"
+      routerLinkActive="active">
+      <i class="fas fa-tasks"></i>
+      <span *ngIf="isExpanded" class="ml-4">Tareas</span>
     </a>
-    <a class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/equipo">
-      <i class="fas fa-users mr-3"></i>
-      Equipo
+
+    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/equipo"
+      routerLinkActive="active">
+      <i class="fas fa-users"></i>
+      <span *ngIf="isExpanded" class="ml-4">Equipo</span>
     </a>
-    <a class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/clientes">
-      <i class="fas fa-users mr-3"></i>
-      Clientes
+
+    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/clientes"
+      routerLinkActive="active">
+      <i class="fas fa-users"></i>
+      <span *ngIf="isExpanded" class="ml-4">Clientes</span>
     </a>
-    <a class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="servicios">
-      <i class="fas fa-concierge-bell mr-3"></i>
-      Servicios
+
+    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/servicios"
+      routerLinkActive="active">
+      <i class="fas fa-concierge-bell"></i>
+      <span *ngIf="isExpanded" class="ml-4">Servicios</span>
     </a>
-    <a class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/reportes">
-      <i class="fas fa-chart-pie mr-3"></i>
-      Reportes
+
+    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/reportes"
+      routerLinkActive="active">
+      <i class="fas fa-chart-pie"></i>
+      <span *ngIf="isExpanded" class="ml-4">Reportes</span>
     </a>
   </nav>
-</aside>
+</div>

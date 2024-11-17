@@ -1,0 +1,8 @@
+.active {
+  background-color: hsl(206, 68%, 42%);
+  color: white;
+}
+
+.active i {
+  color: white;
+}
