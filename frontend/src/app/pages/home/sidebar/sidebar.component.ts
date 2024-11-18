@@ -15,4 +15,10 @@ export class SidebarComponent {
   toggleSidebar() {
     this.isExpanded = !this.isExpanded;
   }
+  isRolesMenuOpen = false;
+
+toggleRolesMenu() {
+  this.isRolesMenuOpen = !this.isRolesMenuOpen;
+}
+
 }

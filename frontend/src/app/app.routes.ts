@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
-import { DashboardComponent } from './pages/home/main/dashboard/dashboard.component';
-import { ProyectosComponent } from './pages/home/main/proyectos/proyectos.component';
+import { Permisos } from './pages/interfaces/permisos';
+
 
 export const routes: Routes = [
 
@@ -10,13 +10,17 @@ export const routes: Routes = [
     component: HomeComponent,
     children:[
       {
-        path: 'dashboard',
+        path: '',
         loadComponent: () => import('./pages/home/main/dashboard/dashboard.component').then(m => m.DashboardComponent)
       },
       {
         path: 'proyectos',
         loadComponent:()=> import('./pages/home/main/proyectos/proyectos.component').then(m=>m.ProyectosComponent)
       },
+      /* {
+        path: 'usuarios',
+        loadComponent:()=> import('./pages/home/main/usuarios/usuarios.component').then(m=>m.UsuariosComponent)
+      }, */
       {
         path: 'tareas',
         loadComponent: () => import('./pages/home/main/tareas/tareas.component').then(m => m.TareasComponent)
@@ -32,6 +36,10 @@ export const routes: Routes = [
       {
         path: 'reportes',
         loadComponent: () => import('./pages/home/main/reportes/reportes.component').then(m => m.ReportesComponent)
+      },
+      {
+        path: 'permisos',
+        loadComponent: () => import('./pages/home/main/permisos/permisos.component').then(m => m.PermisosComponent )
       },
       {
         path:'clientes',

@@ -39,6 +39,15 @@ export class HomeComponent {
           case '/servicios':
             this.title = 'Servicios';
             break;
+          case '/clientes':
+            this.title = 'Clientes';
+            break;
+            case '/roles':
+            this.title = 'Roles';
+            break;
+            case '/permisos':
+            this.title = 'Permisos';
+            break;
           default:
             this.title = 'Dashboard';
             break;

@@ -10,11 +10,17 @@
 
   <!-- Navegación -->
   <nav class="mt-4">
-    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/dashboard"
-      routerLinkActive="active">
+    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/"
+      routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
       <i class="fas fa-tachometer-alt"></i>
       <span *ngIf="isExpanded" class="ml-4">Dashboard</span>
     </a>
+
+    <!-- <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/usuarios"
+      routerLinkActive="active">
+      <i class="fas fa-user"></i>
+      <span *ngIf="isExpanded" class="ml-4">Usuarios</span>
+    </a> -->
 
     <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/proyectos"
       routerLinkActive="active">
@@ -34,11 +40,34 @@
       <span *ngIf="isExpanded" class="ml-4">Equipo</span>
     </a>
 
-    <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/roles"
-      routerLinkActive="active">
-      <i class="fas fa-users"></i>
-      <span *ngIf="isExpanded" class="ml-4">Roles</span>
-    </a>
+    <div>
+      <button class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white w-full"
+        (click)="toggleRolesMenu()">
+        <i class="fas fa-user-check"></i>
+        <span *ngIf="isExpanded" class="ml-4">Roles</span>
+        <i *ngIf="isExpanded"
+          [class]="isRolesMenuOpen ? 'fas fa-chevron-up ml-auto' : 'fas fa-chevron-down ml-auto'"></i>
+      </button>
+
+      <div *ngIf="isRolesMenuOpen" class="ml-6">
+        <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/roles"
+          routerLinkActive="active">
+          <div class="w-6 h-6 flex items-center justify-center">
+            <i class="fas fa-circle"></i>
+          </div>
+          <span *ngIf="isExpanded" class="ml-2">Ver roles</span>
+        </a>
+
+        <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/permisos"
+          routerLinkActive="active">
+          <div class="w-6 h-6 flex items-center justify-center">
+            <i class="fas fa-circle"></i>
+          </div>
+          <span *ngIf="isExpanded" class="ml-2">Ver permisos</span>
+        </a>
+      </div>
+    </div>
+
 
     <a class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white" routerLink="/clientes"
       routerLinkActive="active">
