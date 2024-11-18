@@ -24,7 +24,7 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework import generics,permissions
 from django.db.models import Count, Q
 from .models import Usuarios, AsignacionProyecto, Proyectos
-
+from .serializers import PermisosSerializer
 
 from .models import Proyectos, Tarea, Usuarios, Reporte
 from django.utils import timezone
@@ -111,8 +111,9 @@ class RolListCreateView(generics.ListCreateAPIView):
 class RolDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Roles.objects.all()
     serializer_class = RolesSerializer
+    authentication_classes= [CustomTokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
-
+    
 @api_view(['Post'])
 @authentication_classes([CustomTokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -142,6 +143,20 @@ def asignarRolProyecto(request, proyecto_id):
 
 
     return Response({'message': 'Rol asignado correctamente al usuario en el proyecto.'}, status=status.HTTP_200_OK)
+
+class PermisoListCreateView(generics.ListCreateAPIView):
+    queryset = Permisos.objects.all()
+    serializer_class = PermisosSerializer
+    authentication_classes= [CustomTokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+class PermisoDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Permisos.objects.all()  # Esto está mal
+    serializer_class = PermisosSerializer
+    authentication_classes= [CustomTokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    
+
 
 
     ## CREAR  EDITAR Y ELIMINAR TAREAS

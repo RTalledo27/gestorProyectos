@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgZone, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthentificationService } from '../../../services/auth/authentification.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -12,68 +12,114 @@ import { CommonModule } from '@angular/common';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  username: string = '';
-  password: string = '';
+  loginIntentos: number = 0;
+  bloqueado: boolean = false;
+  tiempoBloqueo: number = 0;
   loginError: string | null = null;
   formLogin: FormGroup;
+
   constructor(
     private router: Router,
     private authService: AuthentificationService,
-    private formBuilder:FormBuilder,
+    private formBuilder: FormBuilder,
+    private ngZone: NgZone
   ) {
     this.formLogin = this.formBuilder.group({
-      username:['',[Validators.required]],
-      password:['',[Validators.required]]
+      username: ['', [Validators.required]],
+      password: ['', [Validators.required]],
+      rememberMe: [false]
     });
   }
 
-  onSubmit() {
+  ngOnInit(): void {
+    // Check if there's a stored token
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.authService.setToken(token);
+      this.router.navigate(['/dashboard']);
+    }{}
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
+    //Add '${implements OnChanges}' to the class.
+    console.log('ngOnChanges called', changes);
+  }
+
+  onSubmit(): void {
     this.loginError = null;
 
-    if(this.formLogin.valid){
-      const {username,password}= this.formLogin.value;
-      this.authService.login(username,password).subscribe(
-        response=>{
-          if(response.token){
-            this.router.navigate(['/']);
-          }else{
-            this.loginError = 'Credenciales inválidas';
-            console.log(this.loginError)
+    if (this.formLogin.valid && !this.bloqueado) {
+      const { username, password, rememberMe } = this.formLogin.value;
+      this.authService.login(username, password).subscribe({
+        next: (response) => {
+          if (response && response.token) {
+            if (rememberMe) {
+              localStorage.setItem('token', response.token);
+            }
+            this.authService.setToken(response.token);
+            this.router.navigate(['/dashboard']);
+          } else {
+            this.loginError = 'Invalid credentials';
+            this.incrementLoginAttempts();
           }
-
         },
-      )};
-
-
-    /*if (!this.email || !this.password) {
-      alert('Por favor, complete todos los campos.');
-      return;
+        error: (error) => {
+          console.error('Login error', error);
+          this.loginError = 'An error occurred during login';
+          this.incrementLoginAttempts();
+        }
+      });
     }
-
-    // Aquí iría la lógica de autenticación
-    console.log('Iniciando sesión con:', this.email, this.password);
-    // Simulación de encriptación de contraseña
-    const encryptedPassword = btoa(this.password);
-    console.log('Contraseña encriptada:', encryptedPassword);
-    // Simulación de generación de token
-    const token = Math.random().toString(36).substr(2);
-    localStorage.setItem('authToken', token);
-    // Redirección al dashboard
-    this.router.navigate(['/dashboard']);*/
   }
 
-  resetPassword() {
-    console.log('Enviando enlace de restablecimiento de contraseña a:', this.username);
-    // Aquí iría la lógica para enviar el correo de restablecimiento
+  private incrementLoginAttempts(): void {
+    this.loginIntentos++;
+    if (this.loginIntentos >= 3) {
+      console.log('Intentos de ingreso excedidos, bloqueando cuenta');
+      this.restringirIngreso();
+    }
   }
 
-  loginWithGoogle() {
+  private restringirIngreso(): void {
+    this.bloqueado = true;
+    this.tiempoBloqueo = 120; // 2 minutos
+    const intervalo = setInterval(() => {
+      this.ngZone.run(() => {
+        this.tiempoBloqueo--;
+        //localStorage.setItem('tiempoBloque', this.tiempoBloqueo.toString());
+        if (this.tiempoBloqueo <= 0) {
+          clearInterval(intervalo);
+          this.bloqueado = false;
+          this.loginIntentos = 0;
+
+        }
+      });
+    }, 1000);
+  }
+
+
+
+
+  resetPassword(): void {
+    const username = this.formLogin.get('username')?.value;
+    if (username) {
+      console.log('Enviando enlace de restablecimiento de contraseña a:', username);
+      // Implement password reset logic here
+      // this.authService.resetPassword(username).subscribe(...)
+    } else {
+      this.loginError = 'Please enter your username to reset password';
+    }
+  }
+
+  loginWithGoogle(): void {
     console.log('Iniciando sesión con Google');
-    // Aquí iría la lógica de autenticación con Google
+    // Implement Google OAuth login
+    // this.authService.loginWithGoogle().subscribe(...)
   }
 
-  loginWithGithub() {
+  loginWithGithub(): void {
     console.log('Iniciando sesión con GitHub');
-    // Aquí iría la lógica de autenticación con GitHub
+    // Implement GitHub OAuth login
+    // this.authService.loginWithGithub().subscribe(...)
   }
 }

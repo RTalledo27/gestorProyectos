@@ -7,7 +7,7 @@ from .views import ClientesListCreateView, ClientesDetailView
 from .views import SubtareasListCreateView, SubtareasDetailView
 from .views import CargosListView, CargosDetailView, UsuariosListView, UsuariosDetailView
 from .views import ProyectosActivosCountView, DashboardDataView, AsignacionProyectosView
-from .views import tareas_pendientes_por_proyecto
+from .views import tareas_pendientes_por_proyecto, PermisoDetailView, PermisoListCreateView
 from . import views
 
 urlpatterns = [
@@ -17,6 +17,9 @@ urlpatterns = [
     path('proyectos/<int:pk>/', ProyectosDetailView.as_view(), name='proyecto-detail'),
     path('roles/', RolListCreateView.as_view(), name='rol-list-create'),
     path('roles/<int:pk>/', RolDetailView.as_view(), name='rol-detail'),
+   ##PERMISOS
+   path('permisos/', PermisoListCreateView.as_view(), name='permiso-list-create'),
+   path('permisos/<int:pk>/', PermisoDetailView.as_view(), name='permiso-detail'),
     #RUTA ASIGNAR ROL A USUARIO EN EL PROYECTO
     path('proyectos/<int:proyecto_id>/asignarRol/', asignarRolProyecto, name='asignar-rol-proyecto'),
     #RUTA LISTA DE TAREAS

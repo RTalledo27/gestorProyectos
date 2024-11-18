@@ -26,6 +26,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/home/main/equipo/equipo.component').then(m => m.EquipoComponent)
       },
       {
+        path: 'roles',
+        loadComponent: () => import('./pages/home/main/roles/roles.component').then(m => m.RolesComponent)
+      },
+      {
         path: 'reportes',
         loadComponent: () => import('./pages/home/main/reportes/reportes.component').then(m => m.ReportesComponent)
       },
