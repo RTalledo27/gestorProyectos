@@ -22,7 +22,7 @@ export class ProyectosComponent {
   filteredProyectos: Proyectos[] = [];
 
   currentPage: number = 1;
-  itemsPerPage: number = 5;
+  itemsPerPage: number = 10;
   searchTerm: string = '';
   sortColumn: keyof Proyectos = 'nombre';
   sortDirection: 'asc' | 'desc' = 'asc';

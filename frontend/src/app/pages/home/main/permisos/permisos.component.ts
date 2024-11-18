@@ -23,7 +23,7 @@ export class PermisosComponent {
   permisoAEliminar: Permisos | null = null;
 
   currentPage: number = 1;
-  itemsPerPage: number = 5;
+  itemsPerPage: number = 10;
   searchTerm: string = '';
   estadoFilter: string = '';
 
@@ -48,7 +48,7 @@ export class PermisosComponent {
   applyFilters() {
     this.filteredPermisos = this.permisos.filter(permiso =>
       permiso.nombre.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
-      (this.estadoFilter === '' || permiso.estado === this.estadoFilter)
+      (this.estadoFilter === '')
     );
   }
 

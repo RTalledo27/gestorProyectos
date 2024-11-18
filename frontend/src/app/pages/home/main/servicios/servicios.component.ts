@@ -23,7 +23,7 @@ export class ServiciosComponent {
   servicioAEliminar: Servicios | null = null; 
 
   currentPage: number = 1;
-  itemsPerPage: number = 5;
+  itemsPerPage: number = 10;
   searchTerm: string = '';
   estadoFilter: string = '';
 

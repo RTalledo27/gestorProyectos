@@ -2,17 +2,25 @@ import { CommonModule } from '@angular/common';
 import { Component, model, SimpleChanges } from '@angular/core';
 import { Tareas } from '../../../interfaces/tareas';
 import { TareasService } from '../../../../services/main/tareas.service';
-import { EditarTareaComponent } from "./editar-tarea/editar-tarea.component";
-import { NuevaSubtareaComponent } from "./nueva-subtarea/nueva-subtarea.component";
+import { EditarTareaComponent } from './editar-tarea/editar-tarea.component';
+import { NuevaSubtareaComponent } from './nueva-subtarea/nueva-subtarea.component';
 import { NuevaTareaComponent } from './nueva-tarea/nueva-tarea.component';
-import { FormGroupDirective, FormsModule, ReactiveFormsModule } from '@angular/forms';
-
-
+import {
+  FormGroupDirective,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 
 @Component({
   selector: 'app-tareas',
   standalone: true,
-  imports: [CommonModule, EditarTareaComponent, NuevaSubtareaComponent,NuevaTareaComponent,FormsModule ],
+  imports: [
+    CommonModule,
+    EditarTareaComponent,
+    NuevaSubtareaComponent,
+    NuevaTareaComponent,
+    FormsModule,
+  ],
   templateUrl: './tareas.component.html',
   styleUrl: './tareas.component.css',
 })
@@ -25,7 +33,7 @@ export class TareasComponent {
   statusFilter: string = '';
 
   currentPage: number = 1;
-  itemsPerPage: number = 5;
+  itemsPerPage: number = 10;
 
   nuevaTareaVisible = false;
   editarTareaVisible = false;
@@ -48,17 +56,22 @@ export class TareasComponent {
       },
       error: (error) => {
         console.error('Error loading tasks:', error);
-      }
+      },
     });
   }
 
   applyFilters() {
-    this.filteredTareas = this.tareas.filter(tarea =>
-      (!this.selectedProyecto || tarea.proyecto?.nombre === this.selectedProyecto) &&
-      (!this.searchTerm || tarea.titulo.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-                           tarea.descripcion?.toLowerCase().includes(this.searchTerm.toLowerCase())) &&
-      (!this.priorityFilter || tarea.prioridad === this.priorityFilter) &&
-      (!this.statusFilter || tarea.estado === this.statusFilter)
+    this.filteredTareas = this.tareas.filter(
+      (tarea) =>
+        (!this.selectedProyecto ||
+          tarea.proyecto?.nombre === this.selectedProyecto) &&
+        (!this.searchTerm ||
+          tarea.titulo.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+          tarea.descripcion
+            ?.toLowerCase()
+            .includes(this.searchTerm.toLowerCase())) &&
+        (!this.priorityFilter || tarea.prioridad === this.priorityFilter) &&
+        (!this.statusFilter || tarea.estado === this.statusFilter)
     );
     this.currentPage = 1;
   }
@@ -82,26 +95,26 @@ export class TareasComponent {
   updateTaskPriority(task: Tareas, newPriority: string) {
     this.tareasService.updateTaskPriority(task.id, newPriority).subscribe({
       next: (updatedTask) => {
-        const index = this.tareas.findIndex(t => t.id === updatedTask.id);
+        const index = this.tareas.findIndex((t) => t.id === updatedTask.id);
         if (index !== -1) {
           this.tareas[index] = updatedTask;
           this.applyFilters();
         }
       },
-      error: (error) => console.error('Error updating task priority:', error)
+      error: (error) => console.error('Error updating task priority:', error),
     });
   }
 
   updateTaskStatus(task: Tareas, newStatus: string) {
     this.tareasService.updateTaskStatus(task.id, newStatus).subscribe({
       next: (updatedTask) => {
-        const index = this.tareas.findIndex(t => t.id === updatedTask.id);
+        const index = this.tareas.findIndex((t) => t.id === updatedTask.id);
         if (index !== -1) {
           this.tareas[index] = updatedTask;
           this.applyFilters();
         }
       },
-      error: (error) => console.error('Error updating task status:', error)
+      error: (error) => console.error('Error updating task status:', error),
     });
   }
 
@@ -116,9 +129,14 @@ export class TareasComponent {
   }
 
   get uniqueProjectNames(): string[] {
-    return Array.from(new Set(this.tareas.map(t => t.proyecto?.nombre).filter((nombre): nombre is string => Boolean(nombre))));
+    return Array.from(
+      new Set(
+        this.tareas
+          .map((t) => t.proyecto?.nombre)
+          .filter((nombre): nombre is string => Boolean(nombre))
+      )
+    );
   }
-
 
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
@@ -186,9 +204,8 @@ export class TareasComponent {
         },
         error: (error) => {
           console.error('Error deleting task:', error);
-        }
+        },
       });
     }
   }
-
 }
