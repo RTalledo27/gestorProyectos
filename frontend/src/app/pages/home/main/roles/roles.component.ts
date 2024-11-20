@@ -12,7 +12,7 @@ import { firstValueFrom, forkJoin } from 'rxjs';
 @Component({
   selector: 'app-roles',
   standalone: true,
-  imports: [ReactiveFormsModule,CommonModule,NgFor],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './roles.component.html',
   styleUrl: './roles.component.css'
 })
