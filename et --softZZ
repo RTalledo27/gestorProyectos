@@ -1,0 +1,325 @@
+[33mcommit 8d6f0011fd92b875ea466d2b801f6cf564229002[m[33m ([m[1;36mHEAD[m[33m, [m[1;32mmain[m[33m)[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Tue Nov 19 21:35:34 2024 -0500
+
+    Cambios
+
+[33mcommit f89ba6673fbc954aa8faf63f62143451341fe7b6[m
+Author: Neira <eneirahuaman@gmail.com>
+Date:   Mon Nov 18 03:46:38 2024 -0500
+
+    Ya no seeeeee que hacer
+
+[33mcommit bfed9665f9345abeba31381809932fad150d586c[m
+Author: Neira <eneirahuaman@gmail.com>
+Date:   Mon Nov 18 02:35:06 2024 -0500
+
+    permisos ok
+
+[33mcommit 3a9db0c33ae90098c5e81c40920b73c18dd6b326[m
+Author: Neira <eneirahuaman@gmail.com>
+Date:   Mon Nov 18 01:59:52 2024 -0500
+
+    Sublista
+
+[33mcommit 470285b0fe997f5beb2d32adbbc88e1b5fe023b3[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Sun Nov 17 22:08:11 2024 -0500
+
+    CAMBIOS
+
+[33mcommit e2edf9fea4862904120f63f24ba1f22a76de8371[m
+Merge: a256a79 5b4176e
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Sun Nov 17 16:46:28 2024 -0500
+
+    Merge branch 'main' of https://github.com/RTalledo27/gestorProyectos
+
+[33mcommit a256a79a84c562a4028812a2b3060936b8fc52d7[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Sun Nov 17 16:46:23 2024 -0500
+
+    CAMBIOS
+
+[33mcommit 5b4176e2884a093616e5d239b4e7df798eeae5eb[m
+Author: Neira <eneirahuaman@gmail.com>
+Date:   Sun Nov 17 16:40:07 2024 -0500
+
+    Estilos sidebar
+
+[33mcommit d7d18c0732d6a847af5e60773bbe85582639c98a[m
+Author: Neira <eneirahuaman@gmail.com>
+Date:   Sun Nov 17 16:28:53 2024 -0500
+
+    Cambios Sidebar v2
+
+[33mcommit 0e98a6e5481cc224bf7af64763f500339cc1eeb4[m
+Author: Neira <eneirahuaman@gmail.com>
+Date:   Sun Nov 17 16:06:11 2024 -0500
+
+    Cambios Sidebar
+
+[33mcommit 6f4120e85ceeb25e8d26038622e410ff56b5317e[m
+Author: Neira <eneirahuaman@gmail.com>
+Date:   Sun Nov 17 14:04:15 2024 -0500
+
+    Reportes new botton
+
+[33mcommit 7c55ef84b7c81d45f72fb24ae3c70dc635bcd43b[m
+Author: Neira <eneirahuaman@gmail.com>
+Date:   Sun Nov 17 13:49:32 2024 -0500
+
+    Reportes Tareas Ok
+
+[33mcommit 0fcb1a89a0a526b42912bf4a53b1a016694d9ee0[m
+Merge: 40f7d41 a2ed37e
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Tue Nov 12 11:29:46 2024 -0500
+
+    Merge branch 'main' of https://github.com/RTalledo27/gestorProyectos
+
+[33mcommit a2ed37ecc24acff40a33ce44f704e03c31c0b64a[m
+Author: Neira <eneirahuaman@gmail.com>
+Date:   Tue Nov 12 11:29:06 2024 -0500
+
+    cambios
+
+[33mcommit 40f7d418fce6468786338b0fb5b59bf699197350[m
+Merge: a4633f7 4b9554d
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Tue Nov 12 11:26:25 2024 -0500
+
+    Merge branch 'main' of https://github.com/RTalledo27/gestorProyectos
+
+[33mcommit 4b9554dee03008f747c9251e9db9c5eff301f8b5[m
+Author: Neira <eneirahuaman@gmail.com>
+Date:   Tue Nov 12 11:15:35 2024 -0500
+
+    Puerto
+
+[33mcommit a4633f75bae6c30183c02071a1b9533fcba9861c[m
+Merge: f1264ec 53dbdd8
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Tue Nov 12 10:09:22 2024 -0500
+
+    CAMBIO R
+
+[33mcommit f1264ec4b4bf5dc4998009927c973b83ae2284d5[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Tue Nov 12 10:08:30 2024 -0500
+
+    CAMBIO R
+
+[33mcommit 53dbdd810c167c80a178ddb077173f469c1ef58f[m
+Author: Neira <eneirahuaman@gmail.com>
+Date:   Tue Nov 12 02:31:43 2024 -0500
+
+    Filtros -> Clientes, Servicios
+
+[33mcommit 4dca3563cf09a0ea25293d3036245655d18de804[m
+Author: Neira <eneirahuaman@gmail.com>
+Date:   Tue Nov 12 01:38:19 2024 -0500
+
+    Reportes - Proyectos
+
+[33mcommit 025878c2c18afc856b4c2d3192af6e346fb15cc0[m
+Author: Neira <eneirahuaman@gmail.com>
+Date:   Tue Nov 12 00:48:45 2024 -0500
+
+    Modales de eliminacion
+
+[33mcommit 2882c53a225bafc1d62f56475f9744e812fc0763[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Mon Nov 11 09:41:05 2024 -0500
+
+    CAMBIOS GSP
+
+[33mcommit e0c9b11d4d3dfea5a16dd36630d4044543b4a931[m
+Merge: b609ba7 7d3af8f
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Tue Nov 5 13:55:36 2024 -0500
+
+    Merge branch 'main' of https://github.com/RTalledo27/gestorProyectos
+
+[33mcommit b609ba7520986f113eda098b410246d519358b32[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Tue Nov 5 13:55:32 2024 -0500
+
+    CAMBIOS CON EQUIPO FUNCIONANDO
+
+[33mcommit 7d3af8fdfb3ad4f160fa222c738a5ea80eac154c[m
+Author: Neira <eneirahuaman@gmail.com>
+Date:   Mon Nov 4 18:38:37 2024 -0500
+
+    cambios
+
+[33mcommit 3ca14638c2dca861eb6f68b596c70429aba9f2cc[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Mon Nov 4 11:06:09 2024 -0500
+
+    CAMBIOS CON DASHBOARD FUNCIONANDO
+
+[33mcommit b9d9beb1b2f33ea4372dc6df23eaab65a15a36a5[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Mon Nov 4 08:25:00 2024 -0500
+
+    CAMBIOS BACKEND- frontend TAREAS- PROYECtos 100%
+
+[33mcommit de5658cc78cd57dec5fb7a4b669cfac43c6917ab[m
+Merge: 51363c6 c3d90fa
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Mon Nov 4 08:20:55 2024 -0500
+
+    Merge branch 'main' of https://github.com/RTalledo27/gestorProyectos
+
+[33mcommit 51363c6b906a10001f9110a24df8aa29274f9d04[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Mon Nov 4 08:18:34 2024 -0500
+
+    CAMBIOS BACKEND TAREAS- PROYECtos 100%
+
+[33mcommit c3d90fa1728dfecbd1f30226499d8d65f33b5e83[m
+Author: Neira <eneirahuaman@gmail.com>
+Date:   Mon Nov 4 01:05:48 2024 -0500
+
+    Crud servicios v1
+
+[33mcommit f6ec3b7cbfb07eb5675dc338c165693bc62df1be[m
+Author: Neira <eneirahuaman@gmail.com>
+Date:   Sun Nov 3 23:30:57 2024 -0500
+
+    Tu hombre resulve v2
+
+[33mcommit ee624bdcc8c24a4b3f1758b36cf13bef0d32cac4[m
+Author: Neira <eneirahuaman@gmail.com>
+Date:   Sun Nov 3 22:50:06 2024 -0500
+
+    Tu hombre resulve
+
+[33mcommit 742af2929cb38f868bc71d3fb5660ec5ceb18c22[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Fri Nov 1 21:58:19 2024 -0500
+
+    CRUD PROYECTOS TAREAS
+
+[33mcommit b7e884db010f17b06ba4f889e89c503e8e245d07[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Fri Nov 1 21:58:03 2024 -0500
+
+    CRUD PROYECTOS TAREAS
+
+[33mcommit 1ce9c080388c8f04f1204e5855ce2871e72276c6[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Wed Oct 30 16:39:16 2024 -0500
+
+    CAMBIOS F
+
+[33mcommit 7a058dc62f76a69906843c5448c9220b03c8a4ac[m
+Merge: 9496161 cdb6bf8
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Wed Oct 30 16:39:06 2024 -0500
+
+    CAMBIOS F
+
+[33mcommit 949616173729a42d3334a37c5695d96d70530840[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Sun Oct 27 16:23:47 2024 -0500
+
+    nuevos cambios
+
+[33mcommit cdb6bf8ecbe7416d29bdcb6902d01785e38ca8a4[m
+Author: Neira <eneirahuaman@gmail.com>
+Date:   Fri Oct 25 20:09:56 2024 -0500
+
+    Add paginacion
+
+[33mcommit 9da60c3da71deb5a6f95f2ef98147ece8bf3ff51[m
+Merge: f2e68b5 0e6ddb6
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Wed Oct 23 09:36:22 2024 -0500
+
+    Merge branch 'main' of https://github.com/RTalledo27/gestorProyectos
+
+[33mcommit f2e68b52e637661bb9baf2c4418219e1a3a64ea7[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Wed Oct 23 09:36:15 2024 -0500
+
+    Camvbios Generales
+
+[33mcommit 0e6ddb6a752782ce8f1ebacc5e78622d57fa7ddc[m
+Author: Neira <eneirah_09@hotmail.com>
+Date:   Mon Oct 21 12:42:43 2024 -0500
+
+    Estilos super cool
+
+[33mcommit b3659c3d90362c420ef4056bf2a939cd202d2b50[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Sun Oct 20 22:40:17 2024 -0500
+
+    CAMBIOS BACKEND
+
+[33mcommit e1981cba7563a32f49c38b03f4215d496ad4625f[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Sun Oct 20 22:38:52 2024 -0500
+
+    CAMBIOS FRONTEND ESTRUCTURA
+
+[33mcommit ca1da1533bea32fe3abae0a661321b0fc408275e[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Fri Oct 18 14:36:03 2024 -0500
+
+    CAMBIOS BACKEND ACTUALIZADO: MODELOS INCLUIDOS
+
+[33mcommit eba230eed82fcf1cc7aa1e8528491a7d147d3181[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Fri Oct 18 14:34:18 2024 -0500
+
+    CAMBIOS BACKEND ACTUALIZADO: MODELOS INCLUIDOS
+
+[33mcommit acb33cbe90317efe7907b58a21e178c754d18522[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Fri Oct 11 11:08:35 2024 -0500
+
+    estructura completa
+
+[33mcommit faef693630d2defb9e9629155d8ed26df14a10ff[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Fri Oct 11 00:15:33 2024 -0500
+
+    CAMBIOS frontend
+
+[33mcommit 9066d2af1855ab5d243821d4671c5fb20039f74a[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Fri Oct 11 00:15:23 2024 -0500
+
+    CAMBIOS frontend
+
+[33mcommit 51797857751b399551a693236f99142e9b9075d6[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Thu Oct 10 23:15:48 2024 -0500
+
+    CAMBIOS BACKEND
+
+[33mcommit 4e50fd3b004550d47838eb918f1c030c8d29088d[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Mon Sep 23 19:05:21 2024 -0500
+
+    CAMBIOS
+
+[33mcommit adfb658e63a6653e996d3d6de3c568e71b6da124[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Mon Sep 23 18:53:41 2024 -0500
+
+    CAMBIOS INICIALES
+
+[33mcommit b97e635741dfbeecd84e0ac3153da2a917f50bc2[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Mon Sep 23 18:45:22 2024 -0500
+
+    cambios frontend
+
+[33mcommit e3a4b7776c39d49e5c115fc45c5b61eda6839df9[m
+Author: Romaim Gianfranco Talledo Coronado <rogitaco@gmail.com>
+Date:   Mon Sep 23 18:37:52 2024 -0500
+
+    INICIO PROYECTO PRACTICAS
