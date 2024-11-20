@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
-from .models import Proyectos, Roles,Permisos,UsuariosRol, Tarea
-from .serializers import ProyectoSerializer
+from .models import AuditLog, Proyectos, Roles,Permisos,UsuariosRol, Tarea
+from .serializers import AuditLogSerializer, ProyectoSerializer
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -18,17 +18,18 @@ from .serializers import UsuariosSerializer, RolesSerializer, TareasSerializer
 from .serializers import ServiciosSerializer, ClientesSerializer
 from .models import Cargos 
 from .serializers import SubTareasSerializer, CargosSerializer
-from .models import ProyectoServicio, ProyectoCliente,SubTareas
+from .models import ProyectoServicio, ProyectoCliente,SubTareas,RolesPermisos
 import secrets  # Importa el módulo secrets para generar tokens
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework import generics,permissions
 from django.db.models import Count, Q
 from .models import Usuarios, AsignacionProyecto, Proyectos
-from .serializers import PermisosSerializer
+from .serializers import PermisosSerializer,RolesPermisosSerializer
 
 from .models import Proyectos, Tarea, Usuarios, Reporte
 from django.utils import timezone
 from datetime import timedelta
+##IMPORTAR @ApiView
 
 # Create your views here.
 
@@ -104,16 +105,31 @@ class ProyectosDetailView(generics.RetrieveUpdateDestroyAPIView):
 class RolListCreateView(generics.ListCreateAPIView):
     queryset = Roles.objects.all()
     serializer_class = RolesSerializer
-    authentication_classes= [CustomTokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-
+    authentication_classes = [CustomTokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get_queryset(self):
+        # Incluir los permisos relacionados en la consulta
+        return Roles.objects.prefetch_related('rolespermisos_set__permiso').all()
+    def perform_create(self, serializer):
+        role = serializer.save()
+        AuditLog.objects.create(accion="Rol creado ", detalles=f"Rol {role.nombre} creado")
 
 class RolDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Roles.objects.all()
     serializer_class = RolesSerializer
-    authentication_classes= [CustomTokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-    
+    authentication_classes = [CustomTokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def perform_update(self, serializer):
+        role = serializer.save()
+        AuditLog.objects.create(accion="Rol Actualizado", detalles=f"Rol  {role.nombre} updated")
+
+    def perform_destroy(self, instance):
+        AuditLog.objects.create(accion="Rol Eliminado", detalles=f"Rol {instance.nombre} deleted")
+        instance.delete()
+        
+
+
 @api_view(['Post'])
 @authentication_classes([CustomTokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -147,17 +163,60 @@ def asignarRolProyecto(request, proyecto_id):
 class PermisoListCreateView(generics.ListCreateAPIView):
     queryset = Permisos.objects.all()
     serializer_class = PermisosSerializer
-    authentication_classes= [CustomTokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [CustomTokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
 
 class PermisoDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Permisos.objects.all()  # Esto está mal
+    queryset = Permisos.objects.all()
     serializer_class = PermisosSerializer
-    authentication_classes= [CustomTokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [CustomTokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+class RolesPermisosView(generics.ListCreateAPIView):
+    queryset = RolesPermisos.objects.all()
+    serializer_class = RolesPermisosSerializer
+    authentication_classes = [CustomTokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+
+    def get_queryset(self):
+        rol_id = self.kwargs.get('pk')
+        return RolesPermisos.objects.filter(rol_id=rol_id)
+
+
+    def create(self, request, *args, **kwargs):
+        rol_id = self.kwargs.get('pk')
+        permiso_ids = request.data.get('permisoIds', [])
+        
+        try:
+            RolesPermisos.objects.filter(rol_id=rol_id).delete()
+            
+            new_permisos = []
+            for permiso_id in permiso_ids:
+                new_permisos.append(RolesPermisos(
+                    rol_id=rol_id,
+                    permiso_id=permiso_id
+            ))
+                
+            RolesPermisos.objects.bulk_create(new_permisos)
+            
+            AuditLog.objects.create(accion="Permisos asignados", detalles=f"Permisos asignados a rol {rol_id}")
+            updated_permisos = self.get_queryset()
+            serializer = self.get_serializer(updated_permisos, many=True)
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response(
+                {'error': str(e), 'message': 'Error asignando permisos'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
     
-
-
+class AuditLogView(generics.ListCreateAPIView):
+    queryset = AuditLog.objects.all().order_by('-timestamp')
+    serializer_class = AuditLogSerializer
+    authentication_classes = [CustomTokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     ## CREAR  EDITAR Y ELIMINAR TAREAS
 

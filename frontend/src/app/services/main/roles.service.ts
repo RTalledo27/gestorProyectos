@@ -1,10 +1,10 @@
+import { RolesPermisos } from './../../pages/interfaces/roles-permisos';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthentificationService } from '../auth/authentification.service';
 import { Observable } from 'rxjs';
 import { Roles } from '../../pages/interfaces/roles';
 import { Router } from '@angular/router';
-import { RolesPermisos } from '../../pages/interfaces/roles-permisos';
 
 @Injectable({
   providedIn: 'root'
@@ -23,46 +23,66 @@ export class RolesService {
     }
   }
 
-  editRole(id: number, data: any): Observable<Roles> {
-   const token = this.authService.getToken();
-   if(!token){
-     this.router.navigate(['/auth/login']);
-   }
-   const headers = new HttpHeaders({
-    'Authorization': `Token ${token}`,
-    'Content-Type': 'application/json'
-  });
-
-    return this.http.put<Roles>(`${this.url}${id}/`, data, { headers });
-  }
-  createRole(data: any): Observable<Roles> {
+  createRol(idRol:Roles): Observable<Roles> {
     const token = this.authService.getToken();
-    if (token) {
-      return this.http.post<Roles>(`${this.url}`, data, { headers: { Authorization: `Token ${token}` } });
-    } else {
-      return this.http.post<Roles>(`${this.url}`, data);
+    if(!token){
+      this.router.navigate(['/auth/login']);
     }
+    const headers = {
+      'Authorization': `Token ${token}`,
+      'Content-Type': 'application/json'
+    };
+    return this.http.post<Roles>(`${this.url}`, idRol,{ headers: headers });
   }
 
-  deleteRole(id: number): Observable<Roles> {
+  editRol(idRol: number, rol: Roles): Observable<Roles> {
     const token = this.authService.getToken();
-    if (token) {
-      return this.http.delete<Roles>(`${this.url}${id}/`, { headers: { Authorization: `Token ${token}` } });
-    } else {
-      return this.http.delete<Roles>(`${this.url}${id}/`);
+    if (!token) {
+      this.router.navigate(['/auth/login']);
     }
+      const headers = {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json'
+      };
+      return this.http.put<Roles>(`${this.url}${idRol}/`, rol,{ headers: headers });
   }
 
-  getRolesPermisos(): Observable<RolesPermisos[]> {
-    return this.http.get<RolesPermisos[]>(`${this.url}/roles-permisos`);
+  deleteRol(idRol: number): Observable<Roles> {
+    const token = this.authService.getToken();
+    if (!token) {
+      this.router.navigate(['/auth/login']);
+    }
+    const headers = {
+      'Authorization': `Token ${token}`,
+      'Content-Type': 'application/json'
+    };
+    return this.http.delete<Roles>(`${this.url}${idRol}/`, { headers: headers });
   }
 
-  assignPermisosToRol(rolId: number, permisoIds: number[]): Observable<RolesPermisos[]> {
-    return this.http.post<RolesPermisos[]>(`${this.url}/roles/${rolId}/permisos`, { permisoIds });
+  getRolesPermisosById(idRol: number): Observable<RolesPermisos[]> {
+    const token = this.authService.getToken();
+    if (!token) {
+      this.router.navigate(['/auth/login']);
+    }
+    return this.http.get<RolesPermisos[]>(`${this.url}${idRol}/permisos/`, { headers: { Authorization: `Token ${token}` } });
   }
 
-  updateRolPermisos(rolId: number, permisoIds: number[]): Observable<RolesPermisos[]> {
-    return this.http.put<RolesPermisos[]>(`${this.url}/roles/${rolId}/permisos`, { permisoIds });
+  getRolesPermisosAll():Observable<RolesPermisos[]>{
+    const token = this.authService.getToken();
+    if(!token){
+      this.router.navigate(['/auth/login']);
+    }
+    return this.http.get<RolesPermisos[]>(`${this.url}permisos/`,{headers: { Authorization: `Token ${token}` }});
   }
+
+
+  assignPermisosToRol(idRol: number, permisoIds: number[]): Observable<RolesPermisos[]> {
+    const token = this.authService.getToken();
+    if (!token) {
+      this.router.navigate(['/auth/login']);
+    }
+    return this.http.post<RolesPermisos[]>(`${this.url}${idRol}/permisos/`, { permisoIds, headers: { Authorization: `Token ${token}` } });
+  }
+
 
 }

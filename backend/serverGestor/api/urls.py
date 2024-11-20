@@ -1,13 +1,13 @@
 from django.urls import path
 #from .views import proyectos
 from django.urls import path
-from .views import login, RolListCreateView, RolDetailView, asignarRolProyecto, TareasListCreateView,TareasDetailView, ProyectosDetailView
+from .views import login, asignarRolProyecto, TareasListCreateView,TareasDetailView, ProyectosDetailView
 from .views import ProyectosListCreateView, ServiciosDetailView, ServiciosListCreateView
 from .views import ClientesListCreateView, ClientesDetailView
 from .views import SubtareasListCreateView, SubtareasDetailView
 from .views import CargosListView, CargosDetailView, UsuariosListView, UsuariosDetailView
 from .views import ProyectosActivosCountView, DashboardDataView, AsignacionProyectosView
-from .views import tareas_pendientes_por_proyecto, PermisoDetailView, PermisoListCreateView
+from .views import tareas_pendientes_por_proyecto, PermisoDetailView, PermisoListCreateView, AuditLogView,RolesPermisosView, RolDetailView, RolListCreateView
 from . import views
 
 urlpatterns = [
@@ -15,12 +15,15 @@ urlpatterns = [
    ## path('proyectos/',proyectos, name='proyecto'),
     path('proyectos/', ProyectosListCreateView.as_view(), name='proyecto-list-create'),
     path('proyectos/<int:pk>/', ProyectosDetailView.as_view(), name='proyecto-detail'),
+   ##ROLES
     path('roles/', RolListCreateView.as_view(), name='rol-list-create'),
     path('roles/<int:pk>/', RolDetailView.as_view(), name='rol-detail'),
    ##PERMISOS
-   path('permisos/', PermisoListCreateView.as_view(), name='permiso-list-create'),
-   path('permisos/<int:pk>/', PermisoDetailView.as_view(), name='permiso-detail'),
-    #RUTA ASIGNAR ROL A USUARIO EN EL PROYECTO
+    path('permisos/', PermisoListCreateView.as_view(), name='permiso-list-create'),
+    path('permisos/<int:pk>/', PermisoDetailView.as_view(), name='permiso-detail'),
+    path('roles/<int:pk>/permisos/', RolesPermisosView.as_view(), name='rol-permisos'),
+    path('audit-logs/', AuditLogView.as_view(), name='audit-logs'),
+     #RUTA ASIGNAR ROL A USUARIO EN EL PROYECTO
     path('proyectos/<int:proyecto_id>/asignarRol/', asignarRolProyecto, name='asignar-rol-proyecto'),
     #RUTA LISTA DE TAREAS
     path('tareas/', TareasListCreateView.as_view(), name='tareas-list-create'),

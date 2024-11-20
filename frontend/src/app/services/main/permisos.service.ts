@@ -28,20 +28,6 @@ export class PermisosService {
     return this.http.get<Permisos[]>(this.urlApiPermisos, { headers: headers });
   }
 
-  // Método para obtener un permiso específico por ID
-  getPermiso(permisoId: number): Observable<Permisos> {
-    const token = this.authService.getToken();
-    if (!token) {
-      this.router.navigate(['/auth/login']);
-    }
-
-    const headers = {
-      'Authorization': `Token ${token}`
-    };
-
-    return this.http.get<Permisos>(`${this.urlApiPermisos}${permisoId}/`, { headers: headers });
-  }
-
   // Método para crear un nuevo permiso
   createPermiso(permiso: Permisos): Observable<Permisos> {
     const token = this.authService.getToken();
@@ -50,37 +36,40 @@ export class PermisosService {
     }
 
     const headers = {
-      'Authorization': `Token ${token}`
+      'Authorization': `Token ${token}`,
+      'Content-Type': 'application/json'
     };
 
     return this.http.post<Permisos>(this.urlApiPermisos, permiso, { headers: headers });
   }
 
-  // Método para editar un permiso existente
-  editPermiso(permisoId: number, permisoData: Permisos): Observable<Permisos> {
+  // Método para editar un permiso
+  editPermiso(idPermiso: number, permiso: Permisos): Observable<Permisos> {
     const token = this.authService.getToken();
     if (!token) {
       this.router.navigate(['/auth/login']);
     }
 
     const headers = {
-      'Authorization': `Token ${token}`
+      'Authorization': `Token ${token}`,
+      'Content-Type': 'application/json'
     };
 
-    return this.http.put<Permisos>(`${this.urlApiPermisos}${permisoId}/`, permisoData, { headers: headers });
+    return this.http.put<Permisos>(`${this.urlApiPermisos}${idPermiso}/`, permiso, { headers: headers });
   }
 
   // Método para eliminar un permiso
-  deletePermiso(permisoId: number): Observable<any> {
+  deletePermiso(idPermiso: number): Observable<Permisos> {
     const token = this.authService.getToken();
     if (!token) {
       this.router.navigate(['/auth/login']);
     }
 
     const headers = {
-      'Authorization': `Token ${token}`
+      'Authorization': `Token ${token}`,
+      'Content-Type': 'application/json'
     };
 
-    return this.http.delete<any>(`${this.urlApiPermisos}${permisoId}/`, { headers: headers });
+    return this.http.delete<Permisos>(`${this.urlApiPermisos}${idPermiso}/`, { headers: headers });
   }
 }

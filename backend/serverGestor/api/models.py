@@ -54,7 +54,8 @@ class Roles(models.Model):
     
     def __str__(self):
         return self.name
-    
+    def get_permisos(self):
+        return Permisos.objects.filter(rolespermisos__rol=self)
 ## MODELO DE PERMISOS: SERIALIZER HECHO
 
 class Permisos(models.Model):
@@ -282,6 +283,14 @@ class EventoCalendario(models.Model):
     fecha_hora_fin = models.DateTimeField()
     creado_por = models.ForeignKey(Usuarios, on_delete=models.SET_NULL, null=True)
     creado_en = models.DateTimeField(auto_now_add=True)
+
+class AuditLog(models.Model):
+    accion = models.CharField(max_length=100)
+    detalles = models.TextField()    
+    timestamp = models.DateTimeField(auto_now_add=True)
+    usuario= models.ForeignKey(Usuarios, on_delete=models.SET_NULL, null=True)
+    def __str__(self):
+        return f"{self.usuario} - {self.accion} - {self.timestamp}"
 
 class IntegracionGitHub(models.Model):
     proyecto = models.OneToOneField(Proyectos, on_delete=models.CASCADE, primary_key=True)

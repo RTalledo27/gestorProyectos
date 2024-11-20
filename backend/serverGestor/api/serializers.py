@@ -3,7 +3,7 @@ from .models import (
     Usuarios, Roles, Permisos, RolesPermisos, Clientes, Servicios, Proyectos,
     UsuariosRol, ProyectoServicio, ProyectoCliente, AsignacionProyecto, Tarea,
     SubTareas, AsignacionTarea, AutenticacionExterna, TokenAutenticacion,
-    Reporte, EventoCalendario, IntegracionGitHub, Cargos
+    Reporte, EventoCalendario, IntegracionGitHub, Cargos,AuditLog
 )
 
 
@@ -27,20 +27,33 @@ class UsuariosSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = Usuarios.objects.create_user(**validated_data)
         return user
-
-class RolesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Roles
-        fields = '__all__'
-
 class PermisosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Permisos
         fields = '__all__'
+class RolesSerializer(serializers.ModelSerializer):
+    permisos = PermisosSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Roles
+        fields = ['id', 'nombre', 'descripcion', 'permisos']
+
+    def get_permisos(self):
+        return Permisos.objects.filter(rolespermisos__rol=self)
+
+
+
 
 class RolesPermisosSerializer(serializers.ModelSerializer):
+    permiso_details = PermisosSerializer(source='permiso', read_only=True)
+    
     class Meta:
         model = RolesPermisos
+        fields = ['id', 'rol', 'permiso', 'permiso_details']
+
+class AuditLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AuditLog
         fields = '__all__'
 
 class ClientesSerializer(serializers.ModelSerializer):

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Roles } from '../../../interfaces/roles';
 import { FormGroup, FormBuilder, Validators, FormArray, ReactiveFormsModule } from '@angular/forms';
 import { RolesService } from '../../../../services/main/roles.service';
@@ -6,6 +6,8 @@ import { PermisosService } from '../../../../services/main/permisos.service';
 import { Permisos } from '../../../interfaces/permisos';
 import { RolesPermisos } from '../../../interfaces/roles-permisos';
 import { CommonModule, NgFor } from '@angular/common';
+import { AuditService } from '../../../../services/main/audit.service';
+import { firstValueFrom, forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-roles',
@@ -19,13 +21,14 @@ export class RolesComponent {
   permisos: Permisos[] = [];
   roleForm: FormGroup;
   editingRole: Roles | null = null;
+  loading = false;
+  error = '';
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private roleService: RolesService,
-    private permisoService: PermisosService,
-    //private auditService: AuditService
-  ) {
+  private formBuilder = inject(FormBuilder);
+  private roleService = inject(RolesService);
+  private permisoService = inject(PermisosService);
+
+  constructor() {
     this.roleForm = this.formBuilder.group({
       nombre: ['', Validators.required],
       descripcion: [''],
@@ -34,151 +37,140 @@ export class RolesComponent {
   }
 
   ngOnInit(): void {
-    this.loadRoles();
-    this.loadPermisos();
+    this.loadInitialData();
   }
 
-  loadRoles(): void {
-    this.roleService.getRoles().subscribe(
-      (roles) => {
-        this.roles = roles;
-      },
-      (error) => {
-        console.error('Error cargando roles', error);
-      }
-    );
+  async loadInitialData(): Promise<void> {
+    this.loading = true;
+    try {
+      const [permisosResponse, rolesResponse] = await Promise.all([
+        firstValueFrom(this.permisoService.getPermisos()),
+        firstValueFrom(this.roleService.getRoles())
+      ]);
+
+      this.permisos = permisosResponse || [];
+      this.roles = rolesResponse.map(role => ({
+        ...role,
+        permisos: role.permisos || [] // Asegura que siempre haya un array de permisos
+      }));
+
+      this.initializePermisoFormArray();
+    } catch (error) {
+      console.error('Error cargando datos iniciales:', error);
+      this.error = 'Error cargando datos. Por favor, intente nuevamente.';
+    } finally {
+      this.loading = false;
+    }
   }
 
-  loadPermisos(): void {
-    this.permisoService.getPermisos().subscribe(
-      (permisos) => {
-        this.permisos = permisos;
-        this.updatePermisoFormArray();
-      },
-      (error) => {
-        console.error('Error cargando permisos', error);
-      }
-    );
-  }
-
-  updatePermisoFormArray(): void {
+  initializePermisoFormArray(): void {
     const permisoFormArray = this.roleForm.get('permisos') as FormArray;
     permisoFormArray.clear();
-    this.permisos.forEach(permiso => {
+
+    this.permisos.forEach(() => {
       permisoFormArray.push(this.formBuilder.control(false));
     });
   }
 
-  onSubmit(): void {
-    if (this.roleForm.valid) {
-      const roleData: Roles = {
-        nombre: this.roleForm.get('nombre')?.value,
-        descripcion: this.roleForm.get('descripcion')?.value
-      };
+  get permisosFormArray(): FormArray {
+    return this.roleForm.get('permisos') as FormArray;
+  }
 
-      const selectedPermisos = this.getSelectedPermisos();
+  async onSubmit(): Promise<void> {
+    if (this.roleForm.invalid) return;
 
+    const roleData: Roles = {
+      nombre: this.roleForm.get('nombre')?.value,
+      descripcion: this.roleForm.get('descripcion')?.value
+    };
+
+    const selectedPermisos = this.getSelectedPermisos();
+    console.log('Permisos seleccionados:', selectedPermisos);
+
+    try {
       if (this.editingRole) {
-        this.updateRole(roleData, selectedPermisos);
+        await this.updateRole(roleData, selectedPermisos);
       } else {
-        this.createRole(roleData, selectedPermisos);
+        await this.createRole(roleData, selectedPermisos);
       }
+
+      await this.loadInitialData();
+      this.resetForm();
+    } catch (error) {
+      console.error('Error:', error);
+      this.error = 'Error procesando la solicitud. Por favor, intente nuevamente.';
     }
   }
 
   getSelectedPermisos(): number[] {
-    const selectedPermisos: number[] = [];
-    const permisoFormArray = this.roleForm.get('permisos') as FormArray;
-    permisoFormArray.controls.forEach((control, index) => {
-      if (control.value) {
-        selectedPermisos.push(this.permisos[index].id!);
-      }
-    });
-    return selectedPermisos;
+    return this.permisosFormArray.controls
+      .map((control, index) => control.value ? this.permisos[index].id : null)
+      .filter((id): id is number => id !== null);
   }
 
-  createRole(roleData: Roles, selectedPermisos: number[]): void {
-    this.roleService.createRole(roleData).subscribe(
-      (createdRole) => {
-        this.roles.push(createdRole);
-        this.assignPermisosToRole(createdRole.id!, selectedPermisos);
-      },
-      (error) => {
-        console.error('Error creando rol', error);
-      }
-    );
-  }
-
-  updateRole(roleData: Roles, selectedPermisos: number[]): void {
-    if (this.editingRole && this.editingRole.id) {
-      this.roleService.editRole(this.editingRole.id, roleData).subscribe(
-        (updatedRole) => {
-          const index = this.roles.findIndex(r => r.id === updatedRole.id);
-          if (index !== -1) {
-            this.roles[index] = updatedRole;
-          }
-          this.assignPermisosToRole(updatedRole.id!, selectedPermisos);
-        },
-        (error) => {
-          console.error('Error actualizando rol', error);
-        }
-      );
+  async createRole(roleData: Roles, selectedPermisos: number[]): Promise<void> {
+    const createdRole = await firstValueFrom(this.roleService.createRol(roleData));
+    if (createdRole && createdRole.id) {
+      await firstValueFrom(this.roleService.assignPermisosToRol(createdRole.id, selectedPermisos));
     }
   }
 
-  assignPermisosToRole(roleId: number, selectedPermisos: number[]): void {
-    this.roleService.assignPermisosToRol(roleId, selectedPermisos).subscribe(
-      () => {
-        //this.auditService.logAction('Permisos asignados', { roleId, permisos: selectedPermisos });
-        this.resetForm();
-        this.loadRoles();
-      },
-      (error) => {
-        console.error('Error asignando permisos al rol', error);
-      }
-    );
+  async updateRole(roleData: Roles, selectedPermisos: number[]): Promise<void> {
+    if (!this.editingRole?.id) return;
+
+    try {
+      await firstValueFrom(this.roleService.editRol(this.editingRole.id, roleData));
+      await firstValueFrom(this.roleService.assignPermisosToRol(this.editingRole.id, selectedPermisos));
+    } catch (error) {
+      console.error('Error actualizando el rol:', error);
+    }
   }
 
   editRole(role: Roles): void {
     this.editingRole = role;
+
     this.roleForm.patchValue({
       nombre: role.nombre,
       descripcion: role.descripcion
     });
-    this.updatePermisoFormArray();
-    this.roleService.getRolesPermisos().subscribe(
-      (rolePermisos) => {
-        const permisoFormArray = this.roleForm.get('permisos') as FormArray;
-        rolePermisos.forEach(rp => {
-          const index = this.permisos.findIndex(p => p.id === rp.permiso);
-          if (index !== -1) {
-            permisoFormArray.at(index).setValue(true);
-          }
-        });
-      },
-      (error) => {
-        console.error('Error cargando permisos del rol', error);
-      }
-    );
+
+    const permisoFormArray = this.permisosFormArray;
+    permisoFormArray.clear();
+
+    this.permisos.forEach(permiso => {
+      permisoFormArray.push(this.formBuilder.control(
+        role.permisos?.some(p => p.id === permiso.id) || false
+      ));
+    });
   }
 
-  deleteRole(roleId: number): void {
-    if (confirm('¿Estás seguro de que quieres eliminar este rol?')) {
-      this.roleService.deleteRole(roleId).subscribe(
-        () => {
-          this.roles = this.roles.filter(r => r.id !== roleId);
-          //this.auditService.logAction('Rol eliminado', { roleId });
-        },
-        (error) => {
-          console.error('Error eliminando rol', error);
-        }
-      );
+
+  updatePermisosCheckboxes(role: Roles): void {
+    const permisoFormArray = this.permisosFormArray;
+    permisoFormArray.clear();
+    this.permisos.forEach(permiso => {
+      const hasPermiso = role.permisos?.some(p => p.id === permiso.id);
+      permisoFormArray.push(this.formBuilder.control(hasPermiso || false));
+    });
+  }
+
+  async deleteRole(roleId: number): Promise<void> {
+    if (!confirm('¿Está seguro de que desea eliminar este rol?')) return;
+
+    try {
+      await firstValueFrom(this.roleService.deleteRol(roleId));
+      this.roles = this.roles.filter(r => r.id !== roleId);
+    } catch (error) {
+      console.error('Error eliminando rol:', error);
+      this.error = 'Error eliminando el rol. Por favor, intente nuevamente.';
     }
   }
 
   resetForm(): void {
     this.editingRole = null;
     this.roleForm.reset();
-    this.updatePermisoFormArray();
+    this.initializePermisoFormArray();
+    this.error = '';
   }
+
 }

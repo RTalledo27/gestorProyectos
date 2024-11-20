@@ -36,7 +36,7 @@ export class LoginComponent {
     const token = localStorage.getItem('token');
     if (token) {
       this.authService.setToken(token);
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/']);
     }{}
   }
   ngOnChanges(changes: SimpleChanges): void {
@@ -57,7 +57,7 @@ export class LoginComponent {
               localStorage.setItem('token', response.token);
             }
             this.authService.setToken(response.token);
-            this.router.navigate(['/dashboard']);
+            this.router.navigate(['/']);
           } else {
             this.loginError = 'Invalid credentials';
             this.incrementLoginAttempts();

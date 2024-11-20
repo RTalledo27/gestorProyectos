@@ -3,6 +3,7 @@ import { EquipoService } from '../../../../../services/main/equipo.service';
 import { Proyectos } from '../../../../interfaces/proyectos';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Roles } from '../../../../interfaces/roles';
 
 @Component({
   selector: 'app-gestionar-equipo',
@@ -17,7 +18,7 @@ export class GestionarEquipoComponent {
 
   miembrosEquipo: any[] = [];
   desarrolladoresDisponibles: any[] = [];
-  roles: string[] = ['Desarrollador', 'Líder de Proyecto', 'Diseñador', 'Tester'];
+  roles: Roles[] = [];
 
   constructor(private equipoService: EquipoService) {}
 
