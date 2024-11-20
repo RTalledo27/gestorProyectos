@@ -1,22 +1,20 @@
-import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import { ReactiveFormsModule, FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { Roles } from '../../../interfaces/roles';
-import { FormGroup, FormBuilder, Validators, FormArray, ReactiveFormsModule } from '@angular/forms';
+import { Permisos } from '../../../interfaces/permisos';
 import { RolesService } from '../../../../services/main/roles.service';
 import { PermisosService } from '../../../../services/main/permisos.service';
-import { Permisos } from '../../../interfaces/permisos';
-import { RolesPermisos } from '../../../interfaces/roles-permisos';
-import { CommonModule, NgFor } from '@angular/common';
-import { AuditService } from '../../../../services/main/audit.service';
-import { firstValueFrom, forkJoin } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-roles',
   standalone: true,
-  imports: [ReactiveFormsModule,CommonModule,NgFor],
+  imports: [CommonModule],
   templateUrl: './roles.component.html',
-  styleUrl: './roles.component.css'
+  styleUrls: ['./roles.component.css']
 })
-export class RolesComponent {
+export class RolesComponent implements OnInit {
   roles: Roles[] = [];
   permisos: Permisos[] = [];
   roleForm: FormGroup;
