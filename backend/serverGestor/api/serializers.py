@@ -30,7 +30,8 @@ class UsuariosSerializer(serializers.ModelSerializer):
 class PermisosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Permisos
-        fields = '__all__'
+        fields = ['id', 'nombre', 'descripcion']
+        
 class RolesSerializer(serializers.ModelSerializer):
     permisos = PermisosSerializer(many=True, read_only=True)
 
@@ -38,10 +39,16 @@ class RolesSerializer(serializers.ModelSerializer):
         model = Roles
         fields = ['id', 'nombre', 'descripcion', 'permisos']
 
-    def get_permisos(self):
-        return Permisos.objects.filter(rolespermisos__rol=self)
+    def get_permisos(self, obj):
+        return Permisos.objects.filter(rolespermisos__rol=obj)
 
-
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['permisos'] = PermisosSerializer(
+            instance.get_permisos(),
+            many=True
+        ).data
+        return representation
 
 
 class RolesPermisosSerializer(serializers.ModelSerializer):

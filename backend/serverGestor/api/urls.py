@@ -29,6 +29,10 @@ urlpatterns = [
     path('tareas/', TareasListCreateView.as_view(), name='tareas-list-create'),
     path('tareas/<int:pk>/', TareasDetailView.as_view(), name='tarea-detail'),
 
+##DATOS DE USUARIO
+path('usuarios/', UsuariosListView.as_view(), name='usuarios-list-create'),
+path('perfil/', UsuariosDetailView.as_view(), name='usuarios-detail'),
+
 
     #RUTAS DE SERVICIOS
     path('servicios/', ServiciosListCreateView.as_view(), name='servicios-list-create'),

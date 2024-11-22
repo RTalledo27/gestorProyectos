@@ -1,8 +1,9 @@
 import { isPlatformBrowser } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable,Inject, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, Observable, of, tap } from 'rxjs';
+import { Usuarios } from '../../pages/interfaces/usuarios';
 
 
 interface LoginResponse {
@@ -17,6 +18,7 @@ interface LoginResponse {
 export class AuthentificationService {
 
   private url=  'http://127.0.0.1:8000/api/login/';
+  private urlPerfil = 'http://127.0.0.1:8000/api/perfil/';
 
   constructor(
     private http: HttpClient,
@@ -70,5 +72,13 @@ export class AuthentificationService {
     this.router.navigate(['/auth/login']);
   }
 
+  private getHeaders(): HttpHeaders {
+    const token = this.getToken();
+    return new HttpHeaders().set('Authorization', `Token ${token}`);
+  }
+
+  getPerfil(): Observable<Usuarios> {
+    return this.http.get<Usuarios>(`${this.urlPerfil}`, { headers: this.getHeaders() });
+  }
 
 }

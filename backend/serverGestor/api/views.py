@@ -107,12 +107,23 @@ class RolListCreateView(generics.ListCreateAPIView):
     serializer_class = RolesSerializer
     authentication_classes = [CustomTokenAuthentication]
     permission_classes = [IsAuthenticated]
+
     def get_queryset(self):
-        # Incluir los permisos relacionados en la consulta
         return Roles.objects.prefetch_related('rolespermisos_set__permiso').all()
-    def perform_create(self, serializer):
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         role = serializer.save()
-        AuditLog.objects.create(accion="Rol creado ", detalles=f"Rol {role.nombre} creado")
+        
+        permisos = request.data.get('permisos', [])
+        RolesPermisos.objects.filter(rol=role).delete()
+        for permiso_id in permisos:
+            RolesPermisos.objects.create(rol=role, permiso_id=permiso_id)
+
+        AuditLog.objects.create(accion="Rol creado", detalles=f"Rol {role.nombre} creado")
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 class RolDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Roles.objects.all()
@@ -120,14 +131,25 @@ class RolDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [CustomTokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def perform_update(self, serializer):
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
         role = serializer.save()
-        AuditLog.objects.create(accion="Rol Actualizado", detalles=f"Rol  {role.nombre} updated")
+
+        permisos = request.data.get('permisos', [])
+        RolesPermisos.objects.filter(rol=role).delete()
+        for permiso_id in permisos:
+            RolesPermisos.objects.create(rol=role, permiso_id=permiso_id)
+
+        AuditLog.objects.create(accion="Rol Actualizado", detalles=f"Rol {role.nombre} actualizado")
+        return Response(serializer.data)
 
     def perform_destroy(self, instance):
-        AuditLog.objects.create(accion="Rol Eliminado", detalles=f"Rol {instance.nombre} deleted")
+        AuditLog.objects.create(accion="Rol Eliminado", detalles=f"Rol {instance.nombre} eliminado")
+        RolesPermisos.objects.filter(rol=instance).delete()
         instance.delete()
-        
 
 
 @api_view(['Post'])
@@ -296,10 +318,13 @@ class UsuariosListView(generics.ListCreateAPIView):
 
 ##USUARIOS DETAIL VIEW
 class UsuariosDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Usuarios.objects.all()
     serializer_class = UsuariosSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    authentication_classes= [CustomTokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [CustomTokenAuthentication]
+
+    def get_object(self):
+        # Retorna el usuario autenticado directamente
+        return self.request.user
 
 class ProyectosActivosCountView(generics.RetrieveAPIView):
     queryset = Usuarios.objects.all()

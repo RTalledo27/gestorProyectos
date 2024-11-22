@@ -52,11 +52,12 @@ class Roles(models.Model):
     nombre = models.CharField(max_length=30)
     descripcion = models.TextField(max_length=100)
     
-    def __str__(self):
-        return self.name
     def get_permisos(self):
         return Permisos.objects.filter(rolespermisos__rol=self)
-## MODELO DE PERMISOS: SERIALIZER HECHO
+
+    def __str__(self):
+        return self.nombre
+    ## MODELO DE PERMISOS: SERIALIZER HECHO
 
 class Permisos(models.Model):
     nombre = models.CharField(max_length=50, unique=True)
