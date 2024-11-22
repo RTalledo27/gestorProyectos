@@ -45,6 +45,7 @@ backend/.env
 backend/static/
 backend/media/
 backend/*.log
+backend/serverGestor/serverGestor/settings.py
 
 # Frontend (Angular)
 frontend/node_modules/

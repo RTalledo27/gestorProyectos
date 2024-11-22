@@ -100,6 +100,40 @@ class ProyectosDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [CustomTokenAuthentication]  # Verifica esta línea
 
+
+@api_view(['GET'])
+@authentication_classes([CustomTokenAuthentication])
+@permission_classes([IsAuthenticated])
+def proyecto_detalle(request, pk):
+    try:
+        proyecto = Proyectos.objects.get(pk=pk)
+    except Proyectos.DoesNotExist:
+        return Response({'error': 'Proyecto no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+    proyecto_detalle = ProyectoSerializer(proyecto).data
+# Get team members
+    asignaciones = AsignacionProyecto.objects.filter(proyecto=proyecto)
+    equipo = [
+        {
+            'id': asignacion.usuario.id,
+            'nombre': f"{asignacion.usuario.nombres} {asignacion.usuario.apellidos}",
+            'cargo': asignacion.usuario.cargo.nombre if asignacion.usuario.cargo else 'N/A',
+            'rol': asignacion.rol
+        } for asignacion in asignaciones
+    ]
+    proyecto_detalle['equipo'] = equipo
+
+    # Get tasks and subtasks
+    tareas = Tarea.objects.filter(proyecto=proyecto)
+    tareas_data = TareasSerializer(tareas, many=True).data
+    for tarea in tareas_data:
+        subtareas = SubTareas.objects.filter(tarea_id=tarea['id'])
+        tarea['subtareas'] = SubTareasSerializer(subtareas, many=True).data
+
+    proyecto_detalle['tareas'] = tareas_data
+
+    return Response(proyecto_detalle)
+
 #GESTIONAR ROLES Y PERMISOS:
 
 class RolListCreateView(generics.ListCreateAPIView):

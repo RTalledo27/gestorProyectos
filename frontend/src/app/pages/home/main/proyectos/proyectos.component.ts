@@ -6,10 +6,11 @@ import { Proyectos } from '../../../interfaces/proyectos';
 import { ProyectosService } from '../../../../services/main/proyectos.service';
 import { FormsModule } from '@angular/forms';
 import { GestionarEquipoComponent } from "./gestionar-equipo/gestionar-equipo.component";
+import { DetallesProyectoComponent } from "./detalles-proyecto/detalles-proyecto.component";
 @Component({
   selector: 'app-proyectos',
   standalone: true,
-  imports: [CommonModule, FormsModule, NuevoProyectoComponent, EditarProyectoComponent, GestionarEquipoComponent],
+  imports: [CommonModule, FormsModule, NuevoProyectoComponent, EditarProyectoComponent, GestionarEquipoComponent, DetallesProyectoComponent],
   templateUrl: './proyectos.component.html',
   styleUrl: './proyectos.component.css'
 })
@@ -17,6 +18,7 @@ import { GestionarEquipoComponent } from "./gestionar-equipo/gestionar-equipo.co
 export class ProyectosComponent {
   nuevoProyectoVisible = false;
   editarProyectoVisible = false;
+  detallesProyectoVisible = false;
   proyectoEditar: Proyectos[] = [];
   proyectos: Proyectos[] = [];
   filteredProyectos: Proyectos[] = [];
@@ -118,6 +120,11 @@ export class ProyectosComponent {
     this.cargarProyectos();
   }
 
+  closeDetallesProyectoDiv() {
+    this.nuevoProyectoVisible = false;
+    this.cargarProyectos();
+  }
+
   openEditarProyectoDiv(proyecto: Proyectos) {
     if (proyecto) {
       this.proyectoEditar = [proyecto];
@@ -159,5 +166,17 @@ export class ProyectosComponent {
     this.proyectoSeleccionado = null;
     this.cargarProyectos();
   }
+
+
+  /*getProyectoDetalle(id: number) {
+    this.proyectosService.getProyectoDetalle(id||35).subscribe({
+      next: (data: any) => {
+        console.log(data);
+      },
+      error: (error) => {
+        console.error('Error al obtener detalles del proyecto:', error);
+      }
+    });
+  }*/
 
 }

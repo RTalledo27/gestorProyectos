@@ -67,6 +67,11 @@ path('perfil/', UsuariosDetailView.as_view(), name='usuarios-detail'),
     path('proyectos/tareas-pendientes/', views.tareas_pendientes_por_proyecto, name='tareas_pendientes_por_proyecto'),
 
 
+
+
+path('proyectos/<int:pk>/detalle/', views.proyecto_detalle, name='proyecto-detalle'),
+
+
 ]
 
 
