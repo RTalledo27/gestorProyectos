@@ -10,7 +10,7 @@ import { AuthentificationService } from '../../../services/auth/authentification
 })
 export class NavbarComponent {
   @Input() title: string ='';
-  userName: string = 'John Doe';
+  userName: string = '';
   showDropdown = false;
 
 
@@ -30,6 +30,7 @@ export class NavbarComponent {
     this.authService.getPerfil().subscribe({
       next: (perfil) => {
         this.userName = perfil.nombres;
+        console.table(perfil);
       },
       error: (error) => {
         console.error('Error getting user data:', error);

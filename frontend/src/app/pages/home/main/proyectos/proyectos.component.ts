@@ -10,7 +10,7 @@ import { DetallesProyectoComponent } from "./detalles-proyecto/detalles-proyecto
 @Component({
   selector: 'app-proyectos',
   standalone: true,
-  imports: [CommonModule, FormsModule, NuevoProyectoComponent, EditarProyectoComponent, GestionarEquipoComponent, DetallesProyectoComponent],
+  imports: [CommonModule, FormsModule, NuevoProyectoComponent, EditarProyectoComponent, DetallesProyectoComponent],
   templateUrl: './proyectos.component.html',
   styleUrl: './proyectos.component.css'
 })
@@ -121,7 +121,7 @@ export class ProyectosComponent {
   }
 
   closeDetallesProyectoDiv() {
-    this.nuevoProyectoVisible = false;
+    this.detallesProyectoVisible = false;
     this.cargarProyectos();
   }
 
@@ -139,8 +139,13 @@ export class ProyectosComponent {
     this.cargarProyectos();
   }
 
-  verDetallesProgreso(proyecto: Proyectos) {
-    console.log('Ver detalles de progreso para:', proyecto.nombre);
+  openDetallesProyecto(proyecto: Proyectos) {
+    if(proyecto){
+      this.proyectoEditar = [proyecto];
+      this.detallesProyectoVisible = true;
+    }else{
+      this.proyectoEditar = [];
+    }
   }
 
   deleteProyecto(proyecto: Proyectos) {

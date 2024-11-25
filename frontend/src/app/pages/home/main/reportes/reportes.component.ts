@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ProyectosService } from '../../../../services/main/proyectos.service';
-import { TareasService } from '../../../../services/main/tareas.service'; 
+import { TareasService } from '../../../../services/main/tareas.service';
 import { Proyectos } from '../../../interfaces/proyectos';
-import { Tareas } from '../../../interfaces/tareas'; 
+import { Tareas } from '../../../interfaces/tareas';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
@@ -46,7 +46,7 @@ export class ReportesComponent implements OnInit {
 
   constructor(
     private proyectosService: ProyectosService,
-    private tareasService: TareasService 
+    private tareasService: TareasService
   ) {}
 
   ngOnInit(): void {
@@ -83,7 +83,7 @@ export class ReportesComponent implements OnInit {
       this.mostrarModalTareas = true;
     }
   }
-  
+
   cerrarModal(tipo: string) {
     if (tipo === 'proyectos') {
       this.mostrarModal = false;

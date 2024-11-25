@@ -116,9 +116,11 @@ def proyecto_detalle(request, pk):
     equipo = [
         {
             'id': asignacion.usuario.id,
-            'nombre': f"{asignacion.usuario.nombres} {asignacion.usuario.apellidos}",
+            'nombres': asignacion.usuario.nombres,
+            'apellidos': asignacion.usuario.apellidos,
             'cargo': asignacion.usuario.cargo.nombre if asignacion.usuario.cargo else 'N/A',
-            'rol': asignacion.rol
+            'rol': asignacion.rol,
+            'username': asignacion.usuario.username
         } for asignacion in asignaciones
     ]
     proyecto_detalle['equipo'] = equipo
@@ -357,8 +359,19 @@ class UsuariosDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [CustomTokenAuthentication]
 
     def get_object(self):
-        # Retorna el usuario autenticado directamente
+        # Get the requested user ID from the URL
+        pk = self.kwargs.get('pk')
+        if pk is not None:
+            return get_object_or_404(Usuarios, pk=pk)
+        # If no pk provided, return the authenticated user
         return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        print(f"Actulizando usuario con Id: {kwargs.get('pk')}")
+        print(f"Data obtenida: {request.data}")
+        response = super().update(request, *args, **kwargs)
+        print(f"usuario actualizado: {response.data}")
+        return response
 
 class ProyectosActivosCountView(generics.RetrieveAPIView):
     queryset = Usuarios.objects.all()

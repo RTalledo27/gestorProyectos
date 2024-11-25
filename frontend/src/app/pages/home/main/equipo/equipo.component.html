@@ -1,11 +1,16 @@
 <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-8">
   <div class="max-w-7xl mx-auto">
-    <h1 class="text-4xl font-extrabold mb-8 text-gray-900 tracking-tight">
-      Lista de Desarrolladores
-      <span class="block text-lg font-normal text-gray-500 mt-2">
-        Gestiona y visualiza la información de los desarrolladores de la empresa
-      </span>
-    </h1>
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight">
+        Lista de Desarrolladores
+        <span class="block text-lg font-normal text-gray-500 mt-2">
+          Gestiona y visualiza la información de los desarrolladores de la empresa
+        </span>
+      </h1>
+      <button (click)="openAddDesarrolladorModal()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+        Agregar Desarrollador
+      </button>
+    </div>
 
     <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
       <div class="p-6">
@@ -26,11 +31,7 @@
               class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
             >
               <option value="">Todas las especialidades</option>
-              <option value="Desarrollador Frontend">Frontend</option>
-              <option value="Desarrollador Backend">Backend</option>
-              <option value="Desarrollador Fullstack">Fullstack</option>
-              <option value="Desarrollador Mobile">Mobile</option>
-              <option value="Desarrollador DevOps">DevOps</option>
+              <option *ngFor="let cargo of cargos" [value]="cargo.nombre">{{ cargo.nombre }}</option>
             </select>
           </div>
         </div>
@@ -74,7 +75,8 @@
                 {{ desarrollador.proyectos_activos }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <button (click)="verPerfilDesarrollador(desarrollador.id)" class="text-indigo-600 hover:text-indigo-900">Ver Perfil</button>
+                <button (click)="verPerfilDesarrollador(desarrollador.id)" class="text-indigo-600 hover:text-indigo-900 mr-2">Ver Perfil</button>
+                <button (click)="openEditModal(desarrollador)" class="text-green-600 hover:text-green-900">Editar</button>
               </td>
             </tr>
           </tbody>
@@ -83,5 +85,122 @@
     </div>
   </div>
 
-  <app-perfil></app-perfil>
+  <!-- Add Developer Modal -->
+  <div *ngIf="showAddModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+      <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Agregar Desarrollador</h3>
+      <form [formGroup]="desarrolladorForm" (ngSubmit)="addDesarrollador()">
+        <div class="mb-4">
+          <label for="username" class="block text-sm font-medium text-gray-700">Nombre de usuario</label>
+          <input type="text" id="username" formControlName="username" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+        <div class="mb-4">
+          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+          <input type="email" id="email" formControlName="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+        <div class="mb-4">
+          <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
+          <input type="password" id="password" formControlName="password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+        <div class="mb-4">
+          <label for="nombres" class="block text-sm font-medium text-gray-700">Nombres</label>
+          <input type="text" id="nombres" formControlName="nombres" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+        <div class="mb-4">
+          <label for="apellidos" class="block text-sm font-medium text-gray-700">Apellidos</label>
+          <input type="text" id="apellidos" formControlName="apellidos" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+        <div class="mb-4">
+          <label for="cargo" class="block text-sm font-medium text-gray-700">Cargo</label>
+          <select id="cargo" formControlName="cargo" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+            <option value="">Seleccionar cargo</option>
+            <option *ngFor="let cargo of cargos" [value]="cargo.id">{{ cargo.nombre }}</option>
+          </select>
+        </div>
+        <div class="mb-4">
+          <label class="inline-flex items-center">
+            <input type="checkbox" formControlName="is_active" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+            <span class="ml-2">Activo</span>
+          </label>
+        </div>
+        <div class="mt-4 flex justify-end">
+          <button type="button" (click)="closeAddModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded mr-2">
+            Cancelar
+          </button>
+          <button type="submit" [disabled]="!desarrolladorForm.valid" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Developer Modal -->
+  <div *ngIf="showEditModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+      <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Editar Desarrollador</h3>
+      <form [formGroup]="desarrolladorForm" (ngSubmit)="updateDesarrollador()">
+        <!-- Same form fields as Add Developer Modal, except password -->
+        <div class="mb-4">
+          <label for="username" class="block text-sm font-medium text-gray-700">Nombre de usuario</label>
+          <input type="text" id="username" formControlName="username" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+        <div class="mb-4">
+          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+          <input type="email" id="email" formControlName="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+        <div class="mb-4">
+          <label for="nombres" class="block text-sm font-medium text-gray-700">Nombres</label>
+          <input type="text" id="nombres" formControlName="nombres" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+        <div class="mb-4">
+          <label for="apellidos" class="block text-sm font-medium text-gray-700">Apellidos</label>
+          <input type="text" id="apellidos" formControlName="apellidos" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+        <div class="mb-4">
+          <label for="cargo" class="block text-sm font-medium text-gray-700">Cargo</label>
+          <select id="cargo" formControlName="cargo" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+            <option value="">Seleccionar cargo</option>
+            <option *ngFor="let cargo of cargos" [value]="cargo.id">{{ cargo.nombre }}</option>
+          </select>
+        </div>
+        <div class="mb-4">
+          <label class="inline-flex items-center">
+            <input type="checkbox" formControlName="is_active" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+            <span class="ml-2">Activo</span>
+          </label>
+        </div>
+        <div class="mt-4 flex justify-end">
+          <button type="button" (click)="closeEditModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded mr-2">
+            Cancelar
+          </button>
+          <button type="submit" [disabled]="!desarrolladorForm.valid" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Developer Profile Modal -->
+  <div *ngIf="showProfileModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+      <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Perfil del Desarrollador</h3>
+      <div *ngIf="selectedDesarrollador">
+        <p><strong>Nombre:</strong> {{ selectedDesarrollador.nombres }} {{ selectedDesarrollador.apellidos }}</p>
+        <p><strong>Email:</strong> {{ selectedDesarrollador.email }}</p>
+        <p><strong>Nombre de usuario:</strong> {{ selectedDesarrollador.username }}</p>
+        <p><strong>Cargo:</strong> {{ selectedDesarrollador.cargo?.nombre || 'No asignado' }}</p>
+        <p><strong>Estado:</strong> {{ selectedDesarrollador.is_active ? 'Activo' : 'Inactivo' }}</p>
+        <p><strong>Fecha de creación:</strong> {{ selectedDesarrollador.created_at | date:'dd/MM/yyyy HH:mm' }}</p>
+        <p><strong>Último inicio de sesión:</strong> {{ selectedDesarrollador.last_login  }}</p>
+      </div>
+      <div class="mt-4 flex justify-end">
+        <button (click)="closeProfileModal()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
+

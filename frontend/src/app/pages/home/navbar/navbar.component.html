@@ -3,20 +3,18 @@
     <h1 class="text-2xl font-bold">{{title}}</h1>
     <div class="relative" (mouseenter)="showDropdown = true" (mouseleave)="showDropdown = false">
       <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center cursor-pointer">
-        {{userName.charAt(0).toUpperCase()}}
+        {{userName?.charAt(0)?.toUpperCase()}}
       </div>
       @if(showDropdown){
-        <div
-        class="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg py-1">
-     <div class="px-4 py-2 text-sm text-gray-700">{{userName}}</div>
-     <div class="border-t border-gray-100"></div>
-     <button (click)="logout()"
-             class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
-       Cerrar sesión
-     </button>
-   </div>
+        <div class="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg py-1">
+          <div class="px-4 py-2 text-sm text-gray-700">{{userName || 'Usuario'}}</div>
+          <div class="border-t border-gray-100"></div>
+          <button (click)="logout()"
+                  class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+            Cerrar sesión
+          </button>
+        </div>
       }
-
     </div>
   </div>
 </header>
