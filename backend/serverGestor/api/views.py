@@ -25,7 +25,7 @@ from rest_framework import generics,permissions
 from django.db.models import Count, Q
 from .models import Usuarios, AsignacionProyecto, Proyectos
 from .serializers import PermisosSerializer,RolesPermisosSerializer
-
+from .serializers import UsuarioConProyectosSerializer, ProyectoSerializer
 from .models import Proyectos, Tarea, Usuarios, Reporte
 from django.utils import timezone
 from datetime import timedelta
@@ -520,3 +520,11 @@ def tareas_pendientes_por_proyecto(request):
     }
     
     return Response(data, status=status.HTTP_200_OK)
+
+class UsuariosConProyectosView(generics.ListAPIView):
+    serializer_class = UsuarioConProyectosSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [CustomTokenAuthentication]
+
+    def get_queryset(self):
+        return Usuarios.objects.filter(cargo__nombre__icontains='desarrollador')

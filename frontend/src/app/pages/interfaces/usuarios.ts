@@ -1,4 +1,5 @@
 import { Cargos } from "./cargos";
+import { Proyectos } from "./proyectos";
 
 export interface Usuarios {
   id: number;
@@ -15,4 +16,5 @@ export interface Usuarios {
     descripcion: string;
   };
   proyectos_activos: number;
+  proyectos?: Proyectos[];
 }

@@ -32,18 +32,9 @@ export class EquipoService {
   }
 
   getEquipoConProyectosActivos(): Observable<Usuarios[]> {
-    return forkJoin({
-      equipo: this.getEquipo(),
-      proyectosActivos: this.getProyectosActivosCount()
-    }).pipe(
-      map(({ equipo, proyectosActivos }) =>
-        equipo.map(usuario => ({
-          ...usuario,
-          proyectos_activos: proyectosActivos[usuario.id] || 0
-        }))
-      )
-    );
+    return this.http.get<Usuarios[]>(`${this.apiUrl}/usuarios-proyectos/`, { headers: this.getHeaders() });
   }
+
 
   asignarProyecto(usuario_id: number, proyecto_id: number, rol: any): Observable<Usuarios> {
     const token = this.authService.getToken();

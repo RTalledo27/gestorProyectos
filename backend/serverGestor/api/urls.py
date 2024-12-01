@@ -1,7 +1,7 @@
 from django.urls import path
 #from .views import proyectos
 from django.urls import path
-from .views import login, asignarRolProyecto, TareasListCreateView,TareasDetailView, ProyectosDetailView
+from .views import UsuariosConProyectosView, login, asignarRolProyecto, TareasListCreateView,TareasDetailView, ProyectosDetailView
 from .views import ProyectosListCreateView, ServiciosDetailView, ServiciosListCreateView
 from .views import ClientesListCreateView, ClientesDetailView
 from .views import SubtareasListCreateView, SubtareasDetailView
@@ -63,13 +63,16 @@ path('perfil/', UsuariosDetailView.as_view(), name='usuarios-detail'),
     ##RUTA DE DASHBOARD
         path('dashboard-data/', DashboardDataView.as_view(), name='dashboard-data'),
 
-##TAREAS PENDIENTES POR PROYECTO
+    ##TAREAS PENDIENTES POR PROYECTO
     path('proyectos/tareas-pendientes/', views.tareas_pendientes_por_proyecto, name='tareas_pendientes_por_proyecto'),
 
 
 
 
-path('proyectos/<int:pk>/detalle/', views.proyecto_detalle, name='proyecto-detalle'),
+    path('proyectos/<int:pk>/detalle/', views.proyecto_detalle, name='proyecto-detalle'),
+
+
+    path('usuarios-proyectos/', UsuariosConProyectosView.as_view(), name='usuarios-con-proyectos'),
 
 
 ]

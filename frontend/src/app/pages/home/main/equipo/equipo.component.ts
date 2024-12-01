@@ -1,50 +1,39 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, NgFor } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EquipoService } from '../../../../services/main/equipo.service';
+import { ProyectosService } from '../../../../services/main/proyectos.service';
 import { Usuarios } from '../../../interfaces/usuarios';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { PerfilComponent } from "./perfil/perfil.component";
+import { Proyectos } from '../../../interfaces/proyectos';
+import { Cargos } from '../../../interfaces/cargos';
 
 @Component({
   selector: 'app-equipo',
   standalone: true,
-  imports: [NgFor, CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './equipo.component.html',
-  styleUrl: './equipo.component.css'
+  styleUrls: ['./equipo.component.css']
 })
 export class EquipoComponent implements OnInit {
   desarrolladores: Usuarios[] = [];
   filteredDesarrolladores: Usuarios[] = [];
+  proyectos: Proyectos[] = [];
+  cargos: Cargos[] = [];
   searchTerm: string = '';
   especialidadFilter: string = '';
+  proyectoFilter: string = '';
   sortColumn: keyof Usuarios = 'nombres';
   sortDirection: 'asc' | 'desc' = 'asc';
-  cargos: any[] = [];
-  showAddModal: boolean = false;
-  showEditModal: boolean = false;
-  showProfileModal: boolean = false;
-  selectedDesarrollador: Usuarios | null = null;
-  desarrolladorForm: FormGroup;
-
 
   constructor(
     private equipoService: EquipoService,
-    private fb: FormBuilder
-  ) {
-    this.desarrolladorForm = this.fb.group({
-      username: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
-      nombres: ['', Validators.required],
-      apellidos: ['', Validators.required],
-      is_active: [true],
-      cargo: ['', Validators.required]
-    });
-  }
+    private proyectoService: ProyectosService
+  ) {}
 
   ngOnInit(): void {
     this.cargarDesarrolladores();
     this.cargarCargos();
+    this.cargarProyectos();
     this.equipoService.equipoActualizado.subscribe(() => {
       this.cargarDesarrolladores();
     });
@@ -53,7 +42,7 @@ export class EquipoComponent implements OnInit {
   cargarDesarrolladores(): void {
     this.equipoService.getEquipoConProyectosActivos().subscribe({
       next: (data: Usuarios[]) => {
-        this.desarrolladores = data.filter(usuario => usuario.cargo?.nombre?.toLowerCase().includes('desarrollador'));
+        this.desarrolladores = data;
         this.applyFilters();
       },
       error: (error) => console.error('Error al cargar desarrolladores:', error)
@@ -62,10 +51,19 @@ export class EquipoComponent implements OnInit {
 
   cargarCargos(): void {
     this.equipoService.getCargos().subscribe({
-      next: (data) => {
+      next: (data: Cargos[]) => {
         this.cargos = data;
       },
       error: (error) => console.error('Error al cargar cargos:', error)
+    });
+  }
+
+  cargarProyectos(): void {
+    this.proyectoService.getProyectos().subscribe({
+      next: (data: Proyectos[]) => {
+        this.proyectos = data;
+      },
+      error: (error) => console.error('Error al cargar proyectos:', error)
     });
   }
 
@@ -74,7 +72,8 @@ export class EquipoComponent implements OnInit {
       (dev.nombres?.toLowerCase().includes(this.searchTerm?.toLowerCase()) ||
        dev.apellidos?.toLowerCase().includes(this.searchTerm?.toLowerCase()) ||
        dev.email?.toLowerCase().includes(this.searchTerm?.toLowerCase())) &&
-      (this.especialidadFilter === '' || dev.cargo?.nombre === this.especialidadFilter)
+      (this.especialidadFilter === '' || dev.cargo?.nombre === this.especialidadFilter) &&
+      (this.proyectoFilter === '' || dev.proyectos?.some(p => p.id?.toString() === this.proyectoFilter))
     );
     this.sortDesarrolladores();
   }
@@ -113,90 +112,11 @@ export class EquipoComponent implements OnInit {
     this.applyFilters();
   }
 
-  verPerfilDesarrollador(id: number): void {
-    this.selectedDesarrollador = this.desarrolladores.find(d => d.id === id) || null;
-    this.showProfileModal = true;
+  calculateWorkload(desarrollador: Usuarios): string {
+    const projectCount = desarrollador.proyectos?.length || 0;
+    if (projectCount === 0) return 'Baja';
+    if (projectCount === 1) return 'Media';
+    return 'Alta';
   }
-
-  openAddDesarrolladorModal(): void {
-    this.desarrolladorForm.reset({is_active: true});
-    this.showAddModal = true;
-  }
-
-  closeAddModal(): void {
-    this.showAddModal = false;
-  }
-
-  addDesarrollador(): void {
-    if (this.desarrolladorForm.valid) {
-      this.equipoService.addUsuario(this.desarrolladorForm.value).subscribe({
-        next: (newDesarrollador) => {
-          this.desarrolladores.push(newDesarrollador);
-          this.applyFilters();
-          this.closeAddModal();
-        },
-        error: (error) => console.error('Error al agregar desarrollador:', error)
-      });
-    }
-  }
-
-  closeProfileModal(): void {
-    this.showProfileModal = false;
-    this.selectedDesarrollador = null;
-  }
-
-  openEditModal(desarrollador: Usuarios): void {
-    this.selectedDesarrollador = desarrollador;
-    this.desarrolladorForm.patchValue({
-      username: desarrollador.username,
-      email: desarrollador.email,
-      nombres: desarrollador.nombres,
-      apellidos: desarrollador.apellidos,
-      is_active: desarrollador.is_active,
-      cargo: desarrollador.cargo?.id
-    });
-    this.desarrolladorForm.get('password')?.clearValidators();
-    this.desarrolladorForm.get('password')?.updateValueAndValidity();
-    this.showEditModal = true;
-  }
-
-  closeEditModal(): void {
-    this.showEditModal = false;
-    this.selectedDesarrollador = null;
-  }
-
-  updateDesarrollador(): void {
-    if (this.desarrolladorForm.valid && this.selectedDesarrollador) {
-      const updatedData = {
-        ...this.desarrolladorForm.value,
-        id: this.selectedDesarrollador.id,
-        // Ensure all required fields are included
-        username: this.desarrolladorForm.get('username')?.value,
-        email: this.desarrolladorForm.get('email')?.value,
-        nombres: this.desarrolladorForm.get('nombres')?.value,
-        apellidos: this.desarrolladorForm.get('apellidos')?.value,
-        is_active: this.desarrolladorForm.get('is_active')?.value,
-        cargo: this.desarrolladorForm.get('cargo')?.value
-      };
-      console.log('Enviando datos a la API:', updatedData);
-      this.equipoService.updateUsuario(updatedData).subscribe({
-        next: (updatedDesarrollador) => {
-          console.log(' Datos actualizados:', updatedDesarrollador);
-          const index = this.desarrolladores.findIndex(d => d.id === updatedDesarrollador.id);
-          if (index !== -1) {
-            this.desarrolladores[index] = updatedDesarrollador;
-            this.applyFilters();
-          }
-          this.closeEditModal();
-        },
-        error: (error) => {
-          console.error('Error al actualizar desarrollador:', error);
-          // Display error message to the user
-          alert('Error al actualizar el desarrollador. Por favor, intente de nuevo.');
-        }
-      });
-    }
-  }
-
-
 }
+
