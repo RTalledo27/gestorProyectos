@@ -25,7 +25,7 @@ from rest_framework import generics,permissions
 from django.db.models import Count, Q
 from .models import Usuarios, AsignacionProyecto, Proyectos
 from .serializers import PermisosSerializer,RolesPermisosSerializer
-from .serializers import UsuarioConProyectosSerializer, ProyectoSerializer
+from .serializers import ProyectosSerializer
 from .models import Proyectos, Tarea, Usuarios, Reporte
 from django.utils import timezone
 from datetime import timedelta

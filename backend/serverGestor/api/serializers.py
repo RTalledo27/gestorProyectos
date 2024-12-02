@@ -16,7 +16,7 @@ class CargosSerializer(serializers.ModelSerializer):
 
 class UsuarioConProyectosSerializer(serializers.ModelSerializer):
     proyectos = serializers.SerializerMethodField()
-    cargo = serializers.StringRelatedField()
+    cargo = CargosSerializer()  # Utilizar el serializer relacionado directamente
 
     class Meta:
         model = Usuarios
@@ -28,6 +28,7 @@ class UsuarioConProyectosSerializer(serializers.ModelSerializer):
             [asignacion.proyecto for asignacion in asignaciones], 
             many=True
         ).data
+    
 
 class UsuariosSerializer(serializers.ModelSerializer):
     class Meta:
