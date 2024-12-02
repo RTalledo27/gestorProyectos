@@ -7,6 +7,9 @@
           Visualiza y gestiona la asignación de proyectos para cada miembro del equipo
         </span>
       </h1>
+      <button (click)="openAddUserModal()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Agregar Usuario
+      </button>
     </div>
 
     <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
@@ -63,6 +66,9 @@
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Carga de Trabajo
               </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Acciones
+              </th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
@@ -92,11 +98,106 @@
                   {{ calculateWorkload(desarrollador) }}
                 </span>
               </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button (click)="openAssignModal(desarrollador)" class="text-indigo-600 hover:text-indigo-900 mr-2">
+                  Asignar Proyecto
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
   </div>
-</div>
 
+  <!-- Add User Modal -->
+  <div *ngIf="showAddUserModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+      <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Agregar Nuevo Usuario</h3>
+      <form [formGroup]="newUserForm" (ngSubmit)="addNewUser()">
+        <div class="mb-4" >
+          <label for="username" class="block text-sm font-medium text-gray-700">Usuario</label>
+          <input type="text" id="username" formControlName="username" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+        </div>
+        <div class="mb-4">
+          <label for="nombres" class="block text-sm font-medium text-gray-700">Nombres</label>
+          <input type="text" id="nombres" formControlName="nombres" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+        </div>
+        <div class="mb-4">
+          <label for="apellidos" class="block text-sm font-medium text-gray-700">Apellidos</label>
+          <input type="text" id="apellidos" formControlName="apellidos" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+        </div>
+        <div class="mb-4">
+          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+          <input type="email" id="email" formControlName="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+        </div>
+        <div class="mb-4">
+          <label for="cargo" class="block text-sm font-medium text-gray-700">Cargo</label>
+          <select id="cargo" formControlName="cargo" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+            <option value="">Seleccionar cargo</option>
+            <option *ngFor="let cargo of cargos" [value]="cargo.id">{{ cargo.nombre }}</option>
+          </select>
+        </div>
+        <div class="flex justify-end">
+          <button type="button" (click)="closeAddUserModal()" class="mr-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            Cancelar
+          </button>
+          <button type="submit" [disabled]="newUserForm.invalid" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Assign Project Modal -->
+   <!--USUARIO INFO-->
+  <div *ngIf="showAssignModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+      <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Asignar Proyecto</h3>
+      <div *ngIf="selectedUser">
+        <p class="mb-2"><strong>Usuario:</strong> {{ selectedUser.nombres }} {{ selectedUser.apellidos }}</p>
+        <!--SELECCION DE PROYECTO-->
+        <div class="mb-4">
+          <label for="proyecto" class="block text-sm font-medium text-gray-700">Proyecto</label>
+          <select
+            id="proyecto"
+            [(ngModel)]="selectedProject"
+            class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          >
+            <option [ngValue]="null">Seleccione un proyecto</option>
+            <option *ngFor="let proyecto of proyectos" [ngValue]="proyecto">{{ proyecto.nombre }}</option>
+          </select>
+        </div>
+        <div class="mb-4">
+          <label for="rol" class="block text-sm font-medium text-gray-700">Rol en el proyecto</label>
+          <select
+          id="cargos"
+          [(ngModel)]="selectedRole"
+          class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        >
+          <option [ngValue]="null">Seleccione un proyecto</option>
+          <option *ngFor="let cargo of cargos" [ngValue]="cargo">{{ cargo.nombre }}</option>
+        </select>
+
+
+        </div>
+        <div class="mt-4 flex justify-end">
+          <button
+            (click)="closeAssignModal()"
+            class="mr-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Cancelar
+          </button>
+          <button
+            (click)="assignProject()"
+            [disabled]="!selectedProject || !selectedRole"
+            class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+          >
+            Asignar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

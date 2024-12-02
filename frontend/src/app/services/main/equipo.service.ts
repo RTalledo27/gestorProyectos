@@ -36,17 +36,17 @@ export class EquipoService {
   }
 
 
-  asignarProyecto(usuario_id: number, proyecto_id: number, rol: any): Observable<Usuarios> {
+  asignarProyecto(usuario_id: number, proyecto_id: number, rol: number): Observable<Usuarios> {
     const token = this.authService.getToken();
     if (!token) {
       this.router.navigate(['/auth/login']);
+      return EMPTY;
     }
     const headers = {
       'Authorization': `Token ${token}`
     };
-    return this.http.post<Usuarios>(`${this.apiUrl}/proyectos/${proyecto_id}/asignar/`, { usuario_id: usuario_id, rol: rol }, { headers: headers });
+    return this.http.post<Usuarios>(`${this.apiUrl}/asignar-proyecto/`, { usuario_id, rol, proyecto_id }, { headers });
   }
-
   getMiembrosEquipo(proyectoId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/proyectos/${proyectoId}/equipo`, { headers: this.getHeaders() });
   }
@@ -109,6 +109,12 @@ export class EquipoService {
   getCargos(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/cargos/`, { headers: this.getHeaders() });
   }
+
+
+
+
+
+
 
   private handleError(error: HttpErrorResponse) {
     console.error('Error in updateUsuario:', error);

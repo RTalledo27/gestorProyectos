@@ -7,16 +7,10 @@ from .models import (
 )
 
 
-class CargosSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Cargos
-        fields = '__all__'
-        depth = 1
-
 
 class UsuarioConProyectosSerializer(serializers.ModelSerializer):
     proyectos = serializers.SerializerMethodField()
-    cargo = CargosSerializer()  # Utilizar el serializer relacionado directamente
+    cargo = serializers.SerializerMethodField()
 
     class Meta:
         model = Usuarios
@@ -28,7 +22,15 @@ class UsuarioConProyectosSerializer(serializers.ModelSerializer):
             [asignacion.proyecto for asignacion in asignaciones], 
             many=True
         ).data
-    
+    def get_cargo(self, obj):
+        return CargosSerializer(obj.cargo).data
+
+
+class CargosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cargos
+        fields = '__all__'
+        depth = 1
 
 class UsuariosSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,17 +38,14 @@ class UsuariosSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'nombres', 'apellidos', 'created_at', 'last_login', 'is_active', 'cargo']
         extra_kwargs = {'password': {'write_only': True}}
         depth = 1
-
     def get_proyectos_activos(self, obj):
         return AsignacionProyecto.objects.filter(
             usuario=obj,
             proyecto__estado__in=['En Progreso', 'Pendiente']
         ).count()
-
     def create(self, validated_data):
         user = Usuarios.objects.create_user(**validated_data)
         return user
-
 class PermisosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Permisos

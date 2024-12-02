@@ -6,8 +6,10 @@ from .views import ProyectosListCreateView, ServiciosDetailView, ServiciosListCr
 from .views import ClientesListCreateView, ClientesDetailView
 from .views import SubtareasListCreateView, SubtareasDetailView
 from .views import CargosListView, CargosDetailView, UsuariosListView, UsuariosDetailView
-from .views import ProyectosActivosCountView, DashboardDataView, AsignacionProyectosView
+from .views import ProyectosActivosCountView, DashboardDataView
 from .views import tareas_pendientes_por_proyecto, PermisoDetailView, PermisoListCreateView, AuditLogView,RolesPermisosView, RolDetailView, RolListCreateView
+from .views import AsignacionProyectosView
+
 from . import views
 
 urlpatterns = [
@@ -57,8 +59,8 @@ path('perfil/', UsuariosDetailView.as_view(), name='usuarios-detail'),
 
 
     ##RUTA DE ASIGNACION DE PROYECTO
-    path('proyectos/<int:proyecto_id>/asignar/', AsignacionProyectosView.as_view(), name='asignar-proyecto'),
-    path('proyectos/<int:proyecto_id>/asignar/<int:pk>/', AsignacionProyectosView.as_view(), name='asignar-proyecto'),
+    ##path('proyectos/<int:proyecto_id>/asignar/', AsignacionProyectosView.as_view(), name='asignar-proyecto'),
+   ## path('proyectos/<int:proyecto_id>/asignar/<int:pk>/', AsignacionProyectosView.as_view(), name='asignar-proyecto'),
 
     ##RUTA DE DASHBOARD
         path('dashboard-data/', DashboardDataView.as_view(), name='dashboard-data'),
@@ -74,6 +76,7 @@ path('perfil/', UsuariosDetailView.as_view(), name='usuarios-detail'),
 
     path('usuarios-proyectos/', UsuariosConProyectosView.as_view(), name='usuarios-con-proyectos'),
 
+    path('asignar-proyecto/', AsignacionProyectosView.as_view(), name='asignar-proyecto'),
 
 ]
 
