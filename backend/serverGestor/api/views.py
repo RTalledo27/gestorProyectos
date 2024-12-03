@@ -530,3 +530,5 @@ class UsuariosConProyectosView(generics.ListAPIView):
 
     def get_queryset(self):
         return Usuarios.objects.filter(asignacionproyecto__isnull=False).distinct()
+    
+   ##XDD? 
