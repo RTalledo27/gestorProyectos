@@ -5,7 +5,6 @@ import { Roles } from '../../../interfaces/roles';
 import { Permisos } from '../../../interfaces/permisos';
 import { RolesService } from '../../../../services/main/roles.service';
 import { PermisosService } from '../../../../services/main/permisos.service';
-import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-roles',
@@ -66,11 +65,18 @@ export class RolesComponent implements OnInit {
   initializePermisosFormArray(): void {
     const permisosFormArray = this.roleForm.get('permisos') as FormArray;
     permisosFormArray.clear();
-    this.permisos.forEach(() => {
-      permisosFormArray.push(this.formBuilder.control(false));
+
+    // Create a FormControl for each permission
+    this.permisos.forEach((permiso) => {
+      const control = this.formBuilder.control(false);
+      // Add change listener to debug
+      control.valueChanges.subscribe(value => {
+        console.log(`Permiso ${permiso.id} changed to:`, value);
+        console.log('Current FormArray values:', this.getSelectedPermisos());
+      });
+      permisosFormArray.push(control);
     });
   }
-
   onSubmit(): void {
     if (this.roleForm.invalid) return;
 
@@ -79,25 +85,25 @@ export class RolesComponent implements OnInit {
       descripcion: this.roleForm.get('descripcion')?.value
     };
 
-    // Obtén los permisos seleccionados
     const selectedPermisos = this.getSelectedPermisos();
-    console.log('Permisos seleccionados:', selectedPermisos);
+    console.log('Permisos seleccionados al enviar:', selectedPermisos);
+    this.logPermisosState();
 
     this.loading = true;
     if (this.editingRole) {
-      this.updateRole(roleData, selectedPermisos); // Enviar en actualización
+      this.updateRole(roleData, selectedPermisos);
     } else {
-      this.createRole(roleData, selectedPermisos); // Enviar en creación
+      this.createRole(roleData, selectedPermisos);
     }
   }
 
   createRole(roleData: Partial<Roles>, selectedPermisos: number[]): void {
     this.roleService.createRol(roleData).subscribe({
       next: (savedRole) => {
-        this.assignPermissionsToRole(savedRole.id || 0, selectedPermisos); // Asignar permisos al nuevo rol
+        this.assignPermissionsToRole(savedRole.id || 0, selectedPermisos);
       },
       error: (error) => {
-        console.error('Error creating role:', error);
+        console.error('Error creando rol:', error);
         this.loading = false;
       }
     });
@@ -111,6 +117,7 @@ export class RolesComponent implements OnInit {
         this.fetchRoles();
         this.resetForm();
         this.loading = false;
+
       },
       error: (error) => {
         console.error('Error updating role:', error);
@@ -136,22 +143,28 @@ export class RolesComponent implements OnInit {
   getSelectedPermisos(): number[] {
     const permisosFormArray = this.roleForm.get('permisos') as FormArray;
     return this.permisos
-      .filter((_, index) => permisosFormArray.at(index).value) // Verifica si el checkbox está marcado
-      .map(permiso => permiso.id || 0); // Devuelve el ID del permiso marcado
+      .filter((_, index) => permisosFormArray.at(index).value === true)
+      .map(permiso => permiso.id)
+      .filter((id): id is number => id !== undefined);
   }
 
   editRole(role: Roles): void {
     this.editingRole = role;
     this.roleForm.patchValue({
       nombre: role.nombre,
-      descripcion: role.descripcion
+      descripcion: role.descripcion,
     });
 
+    // Reset and set permissions
     const permisosFormArray = this.roleForm.get('permisos') as FormArray;
-    permisosFormArray.clear();
+    permisosFormArray.valueChanges.subscribe(values => {
+      console.log('FormArray values changed:', values);
+    });
+
     this.permisos.forEach((permiso) => {
-      const hasPermiso = role.permisos?.some((p) => p.id === permiso.id);
-      permisosFormArray.push(this.formBuilder.control(hasPermiso));
+      const isSelected = role.permisos?.some(p => p.id === permiso.id) ?? false;
+      const control = this.formBuilder.control(isSelected);
+      permisosFormArray.push(control);
     });
   }
 
@@ -161,7 +174,7 @@ export class RolesComponent implements OnInit {
     this.roleService.deleteRol(roleId).subscribe({
       next: () => this.fetchRoles(),
       error: (error) => {
-        console.error('Error deleting role:', error);
+        console.error('Error eliminando rol:', error);
         this.loading = false;
       }
     });
@@ -170,6 +183,19 @@ export class RolesComponent implements OnInit {
   resetForm(): void {
     this.editingRole = null;
     this.roleForm.reset();
-    this.initializePermisosFormArray();
+  }
+
+  get permisosFormArray(): FormArray {
+    return this.roleForm.get('permisos') as FormArray;
+  }
+
+  logPermisosState(): void {
+    const permisosFormArray = this.roleForm.get('permisos') as FormArray;
+    console.log('Estado actual de permisos:');
+    this.permisos.forEach((permiso, index) => {
+      console.log(`${permiso.nombre}: ${permisosFormArray.at(index).value}`);
+    });
+    console.log('Permisos seleccionados:', this.getSelectedPermisos());
   }
 }
+

@@ -7,6 +7,7 @@ import { Usuarios } from '../../../interfaces/usuarios';
 import { Proyectos } from '../../../interfaces/proyectos';
 import { Cargos } from '../../../interfaces/cargos';
 import { AsignacionProyectos } from '../../../interfaces/asignacion-proyectos';
+import { Roles } from '../../../interfaces/roles';
 
 @Component({
   selector: 'app-equipo',
@@ -20,6 +21,7 @@ export class EquipoComponent implements OnInit {
   filteredDesarrolladores: Usuarios[] = [];
   proyectos: Proyectos[] = [];
   cargos: Cargos[] = [];
+  roles: Roles[] = [];
   searchTerm: string = '';
   especialidadFilter: string = '';
   proyectoFilter: string = '';
@@ -149,15 +151,13 @@ export class EquipoComponent implements OnInit {
 
   assignProject(): void {
     if (this.selectedUser && this.selectedProject && this.selectedRole) {
-      // Asegúrate de que 'selectedRole' sea el ID del rol y no el nombre o un objeto
       const asignacion: AsignacionProyectos = {
-        usuario_id: this.selectedUser.id,  // ID del usuario
-        proyecto_id: this.selectedProject.id||0,  // ID del proyecto
-        rol: this.selectedRole?.id ||0 // Asegúrate de que 'selectedRole' es un objeto con 'id' y no un string
+        usuario_id: this.selectedUser.id,
+        proyecto_id: this.selectedProject.id || 0,
+        rol: this.selectedRole.id || 0
       };
 
-      // Llamada al servicio para asignar el proyecto
-      this.equipoService.asignarProyecto(asignacion.usuario_id,asignacion.proyecto_id,asignacion.rol).subscribe({
+      this.equipoService.asignarProyecto(asignacion).subscribe({
         next: (response) => {
           console.log('Proyecto asignado exitosamente', response);
           this.cargarDesarrolladores();

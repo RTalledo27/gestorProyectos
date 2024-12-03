@@ -4,6 +4,7 @@ import { AuthentificationService } from '../auth/authentification.service';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Usuarios } from '../../pages/interfaces/usuarios';
 import { catchError, EMPTY, forkJoin, map, Observable, Subject, tap, throwError } from 'rxjs';
+import { AsignacionProyectos } from '../../pages/interfaces/asignacion-proyectos';
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +37,7 @@ export class EquipoService {
   }
 
 
-  asignarProyecto(usuario_id: number, proyecto_id: number, rol: number): Observable<Usuarios> {
+  asignarProyecto(asignacion: AsignacionProyectos): Observable<Usuarios> {
     const token = this.authService.getToken();
     if (!token) {
       this.router.navigate(['/auth/login']);
@@ -45,7 +46,7 @@ export class EquipoService {
     const headers = {
       'Authorization': `Token ${token}`
     };
-    return this.http.post<Usuarios>(`${this.apiUrl}/asignar-proyecto/`, { usuario_id, rol, proyecto_id }, { headers });
+    return this.http.post<Usuarios>(`${this.apiUrl}/asignar-proyecto/`, { asignacion }, { headers });
   }
   getMiembrosEquipo(proyectoId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/proyectos/${proyectoId}/equipo`, { headers: this.getHeaders() });

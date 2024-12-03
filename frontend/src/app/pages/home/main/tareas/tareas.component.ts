@@ -10,6 +10,7 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { ProyectosService } from '../../../../services/main/proyectos.service';
 
 @Component({
   selector: 'app-tareas',
@@ -42,7 +43,7 @@ export class TareasComponent {
   tareaEditar: Tareas[] = [];
   tareaSeleccionada: Tareas | null = null;
 
-  constructor(private tareasService: TareasService) {}
+  constructor(private tareasService: TareasService, private proyectoService: ProyectosService) {}
 
   ngOnInit(): void {
     this.cargarTareas();
@@ -112,9 +113,29 @@ export class TareasComponent {
         if (index !== -1) {
           this.tareas[index] = updatedTask;
           this.applyFilters();
+          this.updateProjectProgress(updatedTask.proyecto?.id);
         }
       },
       error: (error) => console.error('Error updating task status:', error),
+    });
+  }
+
+  updateProjectProgress(projectId: number | undefined) {
+    if (!projectId) return;
+
+    const projectTasks = this.tareas.filter(task => task.proyecto?.id === projectId);
+    const completedTasks = projectTasks.filter(task => task.estado === 'Completada').length;
+    const totalTasks = projectTasks.length;
+
+    if (totalTasks === 0) return;
+
+    const progress = Math.round((completedTasks / totalTasks) * 100);
+
+    this.proyectoService.updateProjectProgress(projectId, progress).subscribe({
+      next: (updatedProject) => {
+        console.log(`Project ${updatedProject.nombre} Progreso actualizado a ${updatedProject.progreso}%`);
+      },
+      error: (error) => console.error('Error actualizando progreso del proyecto:', error),
     });
   }
 

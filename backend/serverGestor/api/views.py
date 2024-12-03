@@ -408,36 +408,19 @@ class CargosDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes= [CustomTokenAuthentication]
 
 ##ASIGNACION DE PROYECTOS: 
-class AsignacionProyectosView(generics.ListCreateAPIView):
-    queryset = AsignacionProyecto.objects.all()
-    serializer_class =ProyectoSerializer
-    permission_classes= [IsAuthenticated]
-    authentication_classes= [CustomTokenAuthentication]
+class AsignacionProyectosView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [CustomTokenAuthentication]
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         proyecto_id = request.data.get('proyecto_id')
         usuario_id = request.data.get('usuario_id')
-        rol=request.data.get('rol')
+        rol_id = request.data.get('rol_id')
 
-        ##VERIFICAR SI PROYECTO EXISTE
-        try:
-            proyecto = Proyectos.objects.get(pk=proyecto_id)
-        except Proyectos.DoesNotExist:
-            return Response({'error': 'Proyecto no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+        proyecto = get_object_or_404(Proyectos, pk=proyecto_id)
+        usuario = get_object_or_404(Usuarios, pk=usuario_id)
+        rol = get_object_or_404(Roles, pk=rol_id)
 
-        ##VERIFICAR SI USUARIO EXISTE
-        try:
-            usuario = Usuarios.objects.get(pk=usuario_id)
-        except Usuarios.DoesNotExist:
-            return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
-
-        ##VERIFICAR SI PROYECTO Y USUARIO NO ESTAN ASIGNADOS
-        try:
-            asignacion = AsignacionProyecto.objects.get(proyecto=proyecto, usuario=usuario)
-        except AsignacionProyecto.DoesNotExist:
-            return Response({'error': 'Usuario no está asignado a este proyecto'}, status=status.HTTP_404_NOT_FOUND)
-    
-        ##ASIGNAR PROYECTO
         asignacion, created = AsignacionProyecto.objects.update_or_create(
             proyecto=proyecto,
             usuario=usuario,
@@ -445,9 +428,14 @@ class AsignacionProyectosView(generics.ListCreateAPIView):
         )
 
         if created:
-            return Response({'message': 'Proyecto asignado exitosamente al usuario con el rol especificado.'}, status=status.HTTP_201_CREATED)
+            message = 'Proyecto asignado exitosamente al usuario con el rol especificado.'
+            status_code = status.HTTP_201_CREATED
         else:
-            return Response({'message': 'Rol actualizado para el usuario en este proyecto.'}, status=status.HTTP_200_OK)
+            message = 'Rol actualizado para el usuario en este proyecto.'
+            status_code = status.HTTP_200_OK
+
+        return Response({'message': message}, status=status_code)
+
 
 
 ##DASHBOARD VIEW
@@ -532,3 +520,22 @@ class UsuariosConProyectosView(generics.ListAPIView):
         return Usuarios.objects.filter(asignacionproyecto__isnull=False).distinct()
     
    ##XDD? 
+
+@api_view(['PATCH'])
+@authentication_classes([CustomTokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_project_progress(request, pk):
+    try:
+        proyecto = Proyectos.objects.get(pk=pk)
+    except Proyectos.DoesNotExist:
+        return Response({'error': 'Proyecto no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+    progreso = request.data.get('progreso')
+    if progreso is None:
+        return Response({'error': 'El campo "progreso" es requerido'}, status=status.HTTP_400_BAD_REQUEST)
+
+    proyecto.progreso = progreso
+    proyecto.save()
+
+    serializer = ProyectoSerializer(proyecto)
+    return Response(serializer.data)

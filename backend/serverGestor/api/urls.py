@@ -78,6 +78,9 @@ path('perfil/', UsuariosDetailView.as_view(), name='usuarios-detail'),
 
     path('asignar-proyecto/', AsignacionProyectosView.as_view(), name='asignar-proyecto'),
 
+    path('proyectos/<int:pk>/progress', views.update_project_progress, name='update-project-progress'),
+
+
 ]
 
 

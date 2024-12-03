@@ -89,6 +89,19 @@ export class ProyectosService {
     return this.http.put<Proyectos>(`${this.url}${proyecto.id}/`, proyecto, { headers });
   }
 
+  updateProjectProgress(idProyecto: number, progreso: number): Observable<Proyectos> {
+      const token = this.authService.getToken();
+      if (!token) {
+        this.router.navigate(['/auth/login']);
+        return new Observable(); // Return empty observable if no token
+      }
+      const headers = new HttpHeaders({
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json'
+      });
+    return this.http.patch<Proyectos>(`${this.url}${idProyecto}/progress`, { progreso: progreso }, { headers });
+  }
+
 
   deleteProyecto(id: number): Observable<any> {
     const token = this.authService.getToken();
