@@ -171,7 +171,7 @@ export class EquipoComponent implements OnInit {
     }
   }
 
-
+//jcjksdnklcfnjslkdcn
 
 
   openAddUserModal(): void {
