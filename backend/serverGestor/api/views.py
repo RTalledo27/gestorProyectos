@@ -529,4 +529,4 @@ class UsuariosConProyectosView(generics.ListAPIView):
     authentication_classes = [CustomTokenAuthentication]
 
     def get_queryset(self):
-        return Usuarios.objects.filter(cargo__nombre__icontains='desarrollador')
+        return Usuarios.objects.filter(asignacionproyecto__isnull=False).distinct()
